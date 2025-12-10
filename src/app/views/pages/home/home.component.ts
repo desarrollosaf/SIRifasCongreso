@@ -46,7 +46,7 @@ export class HomeComponent {
   }
 
   sorteo(){
-    console.log()
+    console.log('llege sorteo')
     this._rifa.numRadom().subscribe((resultados) => {
       this.resultados = resultados;
       console.log(this.resultados)
