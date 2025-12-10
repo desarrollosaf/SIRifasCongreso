@@ -15,17 +15,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const users_1 = __importDefault(require("../models/saf/users"));
-const preguntas_1 = __importDefault(require("../routes/preguntas"));
 const user_1 = __importDefault(require("../routes/user"));
-const combos_1 = __importDefault(require("../routes/combos"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const path_1 = __importDefault(require("path"));
 const auth_1 = require("../middlewares/auth");
-const citas_1 = __importDefault(require("../routes/citas"));
+const rifa_1 = __importDefault(require("../routes/rifa"));
 class Server {
     constructor() {
         this.app = (0, express_1.default)();
-        this.port = process.env.PORT || '3016';
+        this.port = process.env.PORT || '3018';
         this.midlewares();
         this.router();
         this.DBconnetc();
@@ -37,16 +35,14 @@ class Server {
         });
     }
     router() {
-        this.app.use(preguntas_1.default);
-        this.app.use(combos_1.default);
         this.app.use(user_1.default);
-        this.app.use(citas_1.default);
+        this.app.use(rifa_1.default);
     }
     midlewares() {
         this.app.use(express_1.default.json());
         this.app.use((0, cors_1.default)({
-            //origin: 'http://localhost:4200',
-            origin: 'https://jornadasalud.congresoedomex.gob.mx',
+            origin: 'http://localhost:4200',
+            //origin: 'https://jornadasalud.congresoedomex.gob.mx',
             credentials: true
         }));
         this.app.use((0, cookie_parser_1.default)());
@@ -54,8 +50,7 @@ class Server {
         this.app.use((req, res, next) => {
             const publicPaths = [
                 '/api/user/login',
-                '/api/citas/getcitasfecha/',
-                '/api/citas/exelgeneral/'
+                '/api/rifa'
             ];
             const isPublic = publicPaths.some(path => req.originalUrl.startsWith(path));
             if (isPublic) {

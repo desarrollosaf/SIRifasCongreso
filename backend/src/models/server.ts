@@ -1,13 +1,11 @@
 import express, { Application, Request, Response, NextFunction } from 'express';
 import cors from 'cors'
 import UsersSafs from '../models/saf/users';
-import rpreguntas from "../routes/preguntas";
 import routeUser from "../routes/user";
-import rcombos from  "../routes/combos";
 import cookieParser from 'cookie-parser';
 import path from 'path';
 import { verifyToken } from '../middlewares/auth';
-import routeCitas from "../routes/citas";
+import rRifa from "../routes/rifa"
 class Server {
 
     private app: Application
@@ -16,7 +14,7 @@ class Server {
 
     constructor(){
         this.app = express()
-        this.port = process.env.PORT || '3016'
+        this.port = process.env.PORT || '3018'
         this.midlewares();
         this.router();
         this.DBconnetc();
@@ -31,10 +29,8 @@ class Server {
     }
 
     router(){
-        this.app.use(rpreguntas);
-        this.app.use(rcombos);
         this.app.use(routeUser);
-        this.app.use(routeCitas);
+        this.app.use(rRifa);
 
     }
 
@@ -42,8 +38,8 @@ class Server {
     midlewares(){
         this.app.use(express.json())
         this.app.use(cors({
-            //origin: 'http://localhost:4200',
-            origin: 'https://jornadasalud.congresoedomex.gob.mx',
+            origin: 'http://localhost:4200',
+            //origin: 'https://jornadasalud.congresoedomex.gob.mx',
             credentials: true
         }));
 
@@ -53,8 +49,7 @@ class Server {
         this.app.use((req: Request, res: Response, next: NextFunction) => {
             const publicPaths = [
                 '/api/user/login',
-                '/api/citas/getcitasfecha/',
-                '/api/citas/exelgeneral/'
+                '/api/rifa'
             ];
             const isPublic = publicPaths.some(path => req.originalUrl.startsWith(path));
             if (isPublic) {

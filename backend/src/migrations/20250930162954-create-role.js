@@ -2,22 +2,19 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('sesion_cuestionarios', {
+    await queryInterface.createTable('roles', {
       id: {
-        type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4,
-        primaryKey: true,
         allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: Sequelize.INTEGER
       },
-      id_usuario: {
+      name: {
         type: Sequelize.STRING
       },
-      fecha_registro: {
-        type: Sequelize.DATE
-      },
-      comentarios: {
+      desc: {
+        type: Sequelize.STRING,
         allowNull: true,
-        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
@@ -26,14 +23,10 @@ module.exports = {
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE
-      },
-      deletedAt: {
-        type: Sequelize.DATE,
-        allowNull: true 
       }
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('sesion_cuestionarios');
+    await queryInterface.dropTable('roles');
   }
 };
