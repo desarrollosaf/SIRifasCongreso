@@ -35,7 +35,11 @@
         </p>
       </div>
 
-      <div class="xmas-gif-wrapper">
+      
+      <div *ngIf="tipo === 1">
+        Contenido para tipo 1
+      </div>
+      <div class="xmas-gif-wrapper" *ngIf="tipo === 0">
         <!-- Aquí va tu GIF -->
         <img src="images/gifs/tombolaBl.gif"
              alt="Premios de fin de año"

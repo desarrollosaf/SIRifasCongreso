@@ -8,11 +8,11 @@ export const routes: Routes = [
 
   {
     path: '',
-    redirectTo: 'home',
+    redirectTo: 'home/:tipo',
     pathMatch: 'full'
   },
   {
-    path: 'home',
+    path: 'home/:tipo',
     loadComponent: () =>
       import('./views/pages/home/home.component').then((c) => c.HomeComponent)
   },
