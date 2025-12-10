@@ -17,6 +17,11 @@ export const routes: Routes = [
       import('./views/pages/home/home.component').then((c) => c.HomeComponent)
   },
   {
+    path: 'sorteo',
+    loadComponent: () =>
+      import('./views/pages/rifas/rifas.component').then((c) => c.RifasComponent)
+  },
+  {
     path: '',
     component: BaseComponent,
     canActivateChild: [authGuard],

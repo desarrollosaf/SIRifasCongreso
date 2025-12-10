@@ -1,0 +1,43 @@
+<div class="xmas-landing">
+
+  <!-- Decoraciones de las esquinas -->
+  <img class="xmas-decoration deco-top-left"
+       src="images/navidad/superior izquierda.png"
+       alt="Decoración navideña" />
+<!-- 
+  <img class="xmas-decoration deco-top-right"
+       src=""
+       alt="Decoración navideña" /> -->
+
+  <img class="xmas-decoration deco-bottom-left"
+       src="images/navidad/inferior izquierda.png"
+       alt="Decoración navideña" />
+
+  <img class="xmas-decoration deco-bottom-right"
+       src="images/navidad/inferior derecha.png"
+       alt="Decoración navideña" />
+
+  <!-- Contenido principal -->
+  <div class="xmas-inner">
+
+    <!-- fila de logos (opcional) -->
+    <header class="xmas-header">
+      <div class="xmas-logos">
+        <img src="images/navidad/logos.png" alt="Escudo" />
+      </div>
+    </header>
+
+    <main class="xmas-main">
+      <div class="xmas-text">
+        <p class="xmas-badge">Fin de Año 2025</p>
+        <h1 class="xmas-title">SORTEO</h1>
+         <form class="hero-books-form" [formGroup]="formRifa">
+            <button type="submit" (click)="sorteo()">Ruleta</button>
+        </form>
+      </div>
+
+      
+    </main>
+
+  </div>
+</div>

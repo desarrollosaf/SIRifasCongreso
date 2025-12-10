@@ -1,0 +1,144 @@
+:host {
+  display: block;
+}
+
+/* CONTENEDOR GENERAL */
+.xmas-landing {
+  position: relative;
+  min-height: 100vh;
+  background-color: #ffffff;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Área interna para centrar contenido */
+.xmas-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 16px 32px;
+  box-sizing: border-box;
+}
+
+/* DECORACIONES NAVIDEÑAS (NOCHESBUENAS / VELAS) */
+
+.xmas-decoration {
+  position: absolute;
+  pointer-events: none;
+  user-select: none;
+  max-width: 260px;
+  width: 30vw;
+  height: auto;
+}
+
+/* Ajusta estas clases según tus PNG (izq/der, arriba/abajo) */
+.deco-top-left {
+  top: 0px;
+  left: -10px;
+  max-width: 100%;
+}
+
+.deco-top-right {
+  top: 0px;
+  right: -10px;
+  max-width: 100%;
+}
+
+.deco-bottom-left {
+  bottom: 0px;
+  left: 0px;
+  max-width: 100%;
+}
+
+.deco-bottom-right {
+  bottom: 0px;
+  right: 0px;
+  max-width: 100%;
+}
+
+/* HEADER CON LOGOS */
+
+.xmas-header {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+
+.xmas-logos {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.xmas-logos img {
+  height: 100px;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+/* CONTENIDO CENTRAL */
+
+.xmas-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 24px;
+}
+
+/* Texto “afirmativo navideño” */
+.xmas-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: #f7e4c7;
+  color: #8c4b18;
+  margin-bottom: 8px;
+}
+
+.xmas-title {
+  margin: 0 0 8px;
+  font-size: clamp(1.8rem, 2.6vw, 2.6rem);
+  font-weight: 700;
+  color: #444444;
+}
+
+.xmas-subtitle {
+  margin: 0;
+  font-size: clamp(1rem, 1.3vw, 1.2rem);
+  color: #666666;
+}
+
+/* GIF CENTRADO */
+
+.xmas-gif-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.xmas-gif {
+  max-width: 1080px;
+  width: 60vw;
+  height: auto;
+  display: block;
+}
+
+/* Pequeños ajustes para pantallas muy chicas */
+@media (max-width: 480px) {
+  .xmas-inner {
+    padding-inline: 10px;
+  }
+
+  .xmas-logos img {
+    height: 45px;
+  }
+
+  .xmas-decoration {
+    width: 42vw;
+  }
+}
