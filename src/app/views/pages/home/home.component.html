@@ -1,64 +1,47 @@
-<!-- header blanco -->
-<header class="js-header">
-  <div class="js-header-inner">
-    <img src="images/logo-01.png" alt="Congreso" />
-    <!-- <img src="images/logo-voluntariado.png" alt="Voluntariado" /> -->
+<div class="xmas-landing">
+
+  <!-- Decoraciones de las esquinas -->
+  <img class="xmas-decoration deco-top-left"
+       src="images/navidad/superior izquierda.png"
+       alt="Decoración navideña" />
+<!-- 
+  <img class="xmas-decoration deco-top-right"
+       src=""
+       alt="Decoración navideña" /> -->
+
+  <img class="xmas-decoration deco-bottom-left"
+       src="images/navidad/inferior izquierda.png"
+       alt="Decoración navideña" />
+
+  <img class="xmas-decoration deco-bottom-right"
+       src="images/navidad/inferior derecha.png"
+       alt="Decoración navideña" />
+
+  <!-- Contenido principal -->
+  <div class="xmas-inner">
+
+    <!-- fila de logos (opcional) -->
+    <header class="xmas-header">
+      <div class="xmas-logos">
+        <img src="images/navidad/logos.png" alt="Escudo" />
+      </div>
+    </header>
+
+    <main class="xmas-main">
+      <div class="xmas-text">
+        <p class="xmas-badge">Fin de Año 2025</p>
+        <h1 class="xmas-title">¡Celebremos juntos esta Navidad!</h1>
+        <p class="xmas-subtitle">
+        </p>
+      </div>
+
+      <div class="xmas-gif-wrapper">
+        <!-- Aquí va tu GIF -->
+        <img src="images/gifs/tombolaBl.gif"
+             alt="Premios de fin de año"
+             class="xmas-gif" />
+      </div>
+    </main>
+
   </div>
-</header>
-
-<!-- sección principal -->
-<section class="js-hero">
-  <div class="js-hero-bg"></div>
-
-  <!-- decoraciones -->
-  <img src="images/hojas-izquierda.png" alt="" class="js-flores js-flores--left" />
-  <img src="images/hojas-izquierda.png" alt="" class="js-flores js-flores--right" />
-
-  <!-- contenedor que se adapta solo -->
-  <div class="js-hero-inner">
-    <!-- Imagen (irá arriba en pantallas pequeñas, a la derecha en grandes) -->
-    <div class="js-hero-img">
-      <img
-        src="images/Jornada-de-Salud-mujer.png"
-        alt="Salud femenina"
-        class="js-uterus"
-      />
-    </div>
-
-    <!-- Texto -->
-    <div class="js-content">
-      <h1 class="js-title">
-        JORNADA DE<br />
-        <span>SALUD</span>
-      </h1>
-
-      <h2 class="js-subtitle">Citología cervical (Papanicolau)</h2>
-
-      <p class="js-desc">
-        Por la prevención y detección oportuna del cáncer cervicouterino,
-        dirigida a servidoras públicas del Congreso y sus dependencias
-      </p>
-
-      <p class="js-date">8 y 9 de diciembre 2025</p>
-      <p class="js-time">9:00 a 14:00 horas</p>
-
-      <p class="js-address">
-        Calle Plutarco González número 111, entre Pedro Ascencio y Villada.
-        Colonia La Merced y Alameda. Toluca, Edomex.
-      </p>
-
-      <p class="js-age">
-        Estudio para mujeres de entre 25 años y 64 años de edad
-      </p>
-
-      <button class="js-btn"  [routerLink]="['/auth/login']">Regístrate</button>
-
-      <p class="js-notes">
-         <strong>Indicaciones</strong><br>
-        No estar en tu periodo menstrual<br>
-        <strong>En las 48 horas previas: </strong>No haber tenido relaciones sexuales, No haberse realizado duchas vaginales, No haberse aplicado ningún tratamiento médico vaginal (óvulos, cremas o pomadas)
-        
-      </p>
-    </div>
-  </div>
-</section>
+</div>

@@ -2,173 +2,143 @@
   display: block;
 }
 
-/* ------------ HEADER BLANCO ------------ */
-.js-header {
-  background: #ffffff;
-  padding: 10px 0;
-}
-
-.js-header-inner {
-  max-width: 1180px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: center;
-  gap: 40px;
-  align-items: center;
-}
-
-.js-header-inner img {
-  height: 58px;
-  object-fit: contain;
-}
-
-/* ------------ SECCIÓN PRINCIPAL ------------ */
-.js-hero {
+/* CONTENEDOR GENERAL */
+.xmas-landing {
   position: relative;
-  min-height: calc(100vh - 80px);
-  padding: 40px 60px;
-  overflow: hidden;
+  min-height: 100vh;
+  background-color: #ffffff;
   box-sizing: border-box;
-
-  /* 🚀 DISEÑO FLUIDO SIN MEDIA QUERIES */
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 40px;
+  overflow: hidden;
 }
 
-/* fondo magenta */
-.js-hero-bg {
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(90deg, #5b0d39 0%, rgba(91, 13, 57, 0.9) 25%, rgba(91, 13, 57, 0) 55%),
-    linear-gradient(90deg, #b11363 0%, #8d2958 60%, #8d3b5d 100%);
-  z-index: -3;
+/* Área interna para centrar contenido */
+.xmas-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 16px 32px;
+  box-sizing: border-box;
 }
 
-/* decoraciones */
-.js-flores {
+/* DECORACIONES NAVIDEÑAS (NOCHESBUENAS / VELAS) */
+
+.xmas-decoration {
   position: absolute;
   pointer-events: none;
   user-select: none;
-  z-index: -1;
-}
-
-.js-flores--left,
-.js-flores--right {
-  top: 50%;
-  height: 50vh;
-  opacity: 0.5;
-  transform: translateY(-50%);
-}
-
-.js-flores--left {
-  left: 0;
-}
-
-.js-flores--right {
-  right: 0;
-  transform: translateY(-50%) scaleX(-1);
-}
-
-/* imagen principal (útero) */
-.js-uterus {
-  flex: 1 1 350px;  /* 🚀 Se ajusta solo */
-  max-width: 460px;
-  width: 100%;
+  max-width: 260px;
+  width: 30vw;
   height: auto;
-
-  position: relative; /* 🚫 ya no es absolute */
-  display: block;
-  margin: 20px auto;
-
-  filter: drop-shadow(0 14px 24px rgba(0,0,0,0.35));
-  z-index: 0;
 }
 
-/* ------------ TEXTO ------------ */
-.js-content {
-  flex: 1 1 400px;
-  max-width: 600px;
+/* Ajusta estas clases según tus PNG (izq/der, arriba/abajo) */
+.deco-top-left {
+  top: 0px;
+  left: -10px;
+  max-width: 100%;
+}
+
+.deco-top-right {
+  top: 0px;
+  right: -10px;
+  max-width: 100%;
+}
+
+.deco-bottom-left {
+  bottom: 0px;
+  left: 0px;
+  max-width: 100%;
+}
+
+.deco-bottom-right {
+  bottom: 0px;
+  right: 0px;
+  max-width: 100%;
+}
+
+/* HEADER CON LOGOS */
+
+.xmas-header {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+
+.xmas-logos {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.xmas-logos img {
+  height: 100px;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+/* CONTENIDO CENTRAL */
+
+.xmas-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
-  color: #ffffff;
-  z-index: 1;
+  gap: 24px;
 }
 
-.js-title {
-  margin: 0 0 6px;
-  font-size: clamp(40px, 8vw, 90px);
-  line-height: 0.9;
-  font-weight: 800;
+/* Texto “afirmativo navideño” */
+.xmas-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: #f7e4c7;
+  color: #8c4b18;
+  margin-bottom: 8px;
 }
 
-.js-title span {
-  font-size: clamp(40px, 8vw, 90px);
-}
-
-.js-subtitle {
-  margin: 8px 0 10px;
-  font-size: clamp(20px, 4vw, 44px);
+.xmas-title {
+  margin: 0 0 8px;
+  font-size: clamp(1.8rem, 2.6vw, 2.6rem);
   font-weight: 700;
-  color: #ffd34e;
+  color: #444444;
 }
 
-.js-desc {
-  margin: 10px 0 18px;
-  font-size: clamp(15px, 2.5vw, 24px);
-  line-height: 1.5;
+.xmas-subtitle {
+  margin: 0;
+  font-size: clamp(1rem, 1.3vw, 1.2rem);
+  color: #666666;
 }
 
-.js-date {
-  font-size: clamp(18px, 3vw, 29px);
-  font-weight: 700;
-  color: #ffd34e;
+/* GIF CENTRADO */
+
+.xmas-gif-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.js-time {
-  font-size: clamp(16px, 3vw, 24px);
-  font-weight: 800;
-  color: #ffd34e;
+.xmas-gif {
+  max-width: 1080px;
+  width: 60vw;
+  height: auto;
+  display: block;
 }
 
-.js-address {
-  font-size: clamp(12px, 2vw, 16px);
-}
+/* Pequeños ajustes para pantallas muy chicas */
+@media (max-width: 480px) {
+  .xmas-inner {
+    padding-inline: 10px;
+  }
 
-.js-age {
-  font-size: clamp(14px, 2.3vw, 18px);
-  font-weight: 700;
-  margin-bottom: 26px;
-}
+  .xmas-logos img {
+    height: 45px;
+  }
 
-/* botón */
-.js-btn {
-  padding: 13px 48px;
-  border-radius: 40px;
-  border: none;
-  background: #ffffff;
-  color: #b11363;
-  font-size: 18px;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35);
-  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
-}
-
-.js-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
-  filter: brightness(1.02);
-}
-
-.js-btn:active {
-  transform: translateY(1px);
-  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.3);
-}
-
-.js-notes {
-  margin-top: 26px;
-  font-size: clamp(16px, 1.4vw, 11px);
+  .xmas-decoration {
+    width: 42vw;
+  }
 }
