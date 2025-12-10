@@ -49,6 +49,7 @@ export class HomeComponent {
     console.log()
     this._rifa.numRadom().subscribe((resultados) => {
       this.resultados = resultados;
+      console.log(this.resultados)
     });
   }
 
