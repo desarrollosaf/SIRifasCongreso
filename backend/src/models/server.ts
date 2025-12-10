@@ -29,7 +29,7 @@ class Server {
     }
 
     router(){
-        this.app.use(routeUser);
+        //this.app.use(routeUser);
         this.app.use(rRifa);
 
     }
@@ -62,7 +62,7 @@ class Server {
 
     async DBconnetc(){
         try {
-            await UsersSafs.sync();
+            //await UsersSafs.sync();
             console.log("Conexion de DB exitoso");
 
         } catch (error) {

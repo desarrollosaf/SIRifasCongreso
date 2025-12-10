@@ -14,8 +14,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
-const users_1 = __importDefault(require("../models/saf/users"));
-const user_1 = __importDefault(require("../routes/user"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const path_1 = __importDefault(require("path"));
 const auth_1 = require("../middlewares/auth");
@@ -35,7 +33,7 @@ class Server {
         });
     }
     router() {
-        this.app.use(user_1.default);
+        //this.app.use(routeUser);
         this.app.use(rifa_1.default);
     }
     midlewares() {
@@ -62,7 +60,7 @@ class Server {
     DBconnetc() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                yield users_1.default.sync();
+                //await UsersSafs.sync();
                 console.log("Conexion de DB exitoso");
             }
             catch (error) {
