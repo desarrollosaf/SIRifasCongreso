@@ -1,0 +1,174 @@
+:host {
+  display: block;
+}
+
+/* ------------ HEADER BLANCO ------------ */
+.js-header {
+  background: #ffffff;
+  padding: 10px 0;
+}
+
+.js-header-inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  align-items: center;
+}
+
+.js-header-inner img {
+  height: 58px;
+  object-fit: contain;
+}
+
+/* ------------ SECCIÓN PRINCIPAL ------------ */
+.js-hero {
+  position: relative;
+  min-height: calc(100vh - 80px);
+  padding: 40px 60px;
+  overflow: hidden;
+  box-sizing: border-box;
+
+  /* 🚀 DISEÑO FLUIDO SIN MEDIA QUERIES */
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+}
+
+/* fondo magenta */
+.js-hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, #5b0d39 0%, rgba(91, 13, 57, 0.9) 25%, rgba(91, 13, 57, 0) 55%),
+    linear-gradient(90deg, #b11363 0%, #8d2958 60%, #8d3b5d 100%);
+  z-index: -3;
+}
+
+/* decoraciones */
+.js-flores {
+  position: absolute;
+  pointer-events: none;
+  user-select: none;
+  z-index: -1;
+}
+
+.js-flores--left,
+.js-flores--right {
+  top: 50%;
+  height: 50vh;
+  opacity: 0.5;
+  transform: translateY(-50%);
+}
+
+.js-flores--left {
+  left: 0;
+}
+
+.js-flores--right {
+  right: 0;
+  transform: translateY(-50%) scaleX(-1);
+}
+
+/* imagen principal (útero) */
+.js-uterus {
+  flex: 1 1 350px;  /* 🚀 Se ajusta solo */
+  max-width: 460px;
+  width: 100%;
+  height: auto;
+
+  position: relative; /* 🚫 ya no es absolute */
+  display: block;
+  margin: 20px auto;
+
+  filter: drop-shadow(0 14px 24px rgba(0,0,0,0.35));
+  z-index: 0;
+}
+
+/* ------------ TEXTO ------------ */
+.js-content {
+  flex: 1 1 400px;
+  max-width: 600px;
+  text-align: center;
+  color: #ffffff;
+  z-index: 1;
+}
+
+.js-title {
+  margin: 0 0 6px;
+  font-size: clamp(40px, 8vw, 90px);
+  line-height: 0.9;
+  font-weight: 800;
+}
+
+.js-title span {
+  font-size: clamp(40px, 8vw, 90px);
+}
+
+.js-subtitle {
+  margin: 8px 0 10px;
+  font-size: clamp(20px, 4vw, 44px);
+  font-weight: 700;
+  color: #ffd34e;
+}
+
+.js-desc {
+  margin: 10px 0 18px;
+  font-size: clamp(15px, 2.5vw, 24px);
+  line-height: 1.5;
+}
+
+.js-date {
+  font-size: clamp(18px, 3vw, 29px);
+  font-weight: 700;
+  color: #ffd34e;
+}
+
+.js-time {
+  font-size: clamp(16px, 3vw, 24px);
+  font-weight: 800;
+  color: #ffd34e;
+}
+
+.js-address {
+  font-size: clamp(12px, 2vw, 16px);
+}
+
+.js-age {
+  font-size: clamp(14px, 2.3vw, 18px);
+  font-weight: 700;
+  margin-bottom: 26px;
+}
+
+/* botón */
+.js-btn {
+  padding: 13px 48px;
+  border-radius: 40px;
+  border: none;
+  background: #ffffff;
+  color: #b11363;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+
+.js-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+  filter: brightness(1.02);
+}
+
+.js-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.3);
+}
+
+.js-notes {
+  margin-top: 26px;
+  font-size: clamp(16px, 1.4vw, 11px);
+}
