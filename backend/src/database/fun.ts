@@ -1,10 +1,10 @@
 import { Sequelize } from "sequelize"
 
-const sequelizefun = new Sequelize('administracion', 'homestead', 'secret', {
-    host: '192.168.10.10',
+const sequelizefun = new Sequelize('congresoedomex_rifas', 'usr_rifas', '0aoqzV3gtddpDc97gQZPleElW', {
+    host: '192.168.36.53',
     dialect: 'mysql',
     define: {
-        freezeTableName: true // evita que Sequelize pluralice
+        freezeTableName: true 
     }
 })
 
