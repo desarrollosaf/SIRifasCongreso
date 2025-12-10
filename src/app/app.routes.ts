@@ -16,7 +16,6 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./views/pages/home/home.component').then((c) => c.HomeComponent)
   },
-
   {
     path: '',
     component: BaseComponent,
