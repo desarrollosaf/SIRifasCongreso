@@ -25,7 +25,12 @@ export const rifa = async (req: Request, res: Response): Promise<any> => {
             id_premio: regalo?.id,
         })
     }
-    res.json( regalo );
+
+    const totalRegalos = await Regalos.sum('cantidad');
+    return res.json({
+        data: regalo,
+        total: totalRegalos
+    });
 }
 
 export const reporte = async (req: Request, res: Response): Promise<any> => {

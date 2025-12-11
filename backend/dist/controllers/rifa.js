@@ -35,7 +35,11 @@ const rifa = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             id_premio: regalo === null || regalo === void 0 ? void 0 : regalo.id,
         });
     }
-    res.json(regalo);
+    const totalRegalos = yield regalos_1.default.sum('cantidad');
+    return res.json({
+        data: regalo,
+        total: totalRegalos
+    });
 });
 exports.rifa = rifa;
 const reporte = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
