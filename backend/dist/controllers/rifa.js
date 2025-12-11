@@ -59,29 +59,35 @@ const reporte = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const horaGenerada = new Date().toLocaleString("es-MX", { hour12: false });
     doc.fontSize(18).text('Reporte de Rifa', { align: 'center' });
     doc.moveDown();
-    doc.fontSize(12).text(`Hora del reporte: ${horaGenerada}`);
-    doc.moveDown();
-    const tableTop = 140;
-    const col1 = 50; // #
-    const col2 = 100; // Nombre del regalo
-    const col3 = 350; // Fecha creación.
-    // Encabezados
-    doc.fontSize(12).font('Helvetica-Bold');
-    doc.text('#', col1, tableTop);
-    doc.text('Regalo', col2, tableTop);
-    doc.text('Fecha', col3, tableTop);
-    doc.moveTo(40, tableTop + 15)
-        .lineTo(560, tableTop + 15)
-        .stroke();
-    // Filas
-    doc.font('Helvetica');
-    let y = tableTop + 25;
+    const pageBottom = doc.page.height - 40;
+    let y = 120;
+    const drawHeader = () => {
+        doc.fontSize(12).font("Helvetica-Bold");
+        doc.text("#", 50, y, { width: 30 });
+        doc.text("Regalo", 75, y, { width: 350 });
+        doc.text("Fecha", 420, y, { width: 120 });
+        y += 25;
+        doc.font("Helvetica");
+    };
+    drawHeader();
     reporte.forEach((item, index) => {
-        var _a;
-        doc.text(index + 1, col1, y);
-        doc.text((_a = item.m_regalo) === null || _a === void 0 ? void 0 : _a.premio, col2, y);
-        doc.text(item.createdAt, col3, y);
-        y += 20; // espacio entre filas
+        var _a, _b;
+        if (y > pageBottom - 100) {
+            doc.addPage();
+            y = 50;
+            drawHeader();
+        }
+        const fecha = item.createdAt
+            ? new Date(item.createdAt).toLocaleString("es-MX", { hour12: false })
+            : 'Sin fecha';
+        doc.text(index + 1, 50, y, { width: 30 });
+        const regaloHeight = doc.heightOfString((_a = item.m_regalo) === null || _a === void 0 ? void 0 : _a.premio, { width: 350 });
+        doc.text((_b = item.m_regalo) === null || _b === void 0 ? void 0 : _b.premio, 75, y, {
+            width: 350,
+            continued: false
+        });
+        doc.text(fecha, 420, y, { width: 120 });
+        y += regaloHeight + 10;
     });
     doc.end();
 });
