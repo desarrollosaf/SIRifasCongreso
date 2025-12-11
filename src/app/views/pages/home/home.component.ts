@@ -151,6 +151,10 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
   }
 
+  reportePDF(){
+    console.log('Generando PDF')
+  }
+
   limpiarResultado() {
     Swal.fire({
       title: '¿Limpiar resultado?',

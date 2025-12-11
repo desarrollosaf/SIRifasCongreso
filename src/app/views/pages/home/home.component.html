@@ -77,6 +77,11 @@
           <h3>📋 Historial de Ganadores</h3>
           <button 
             class="btn-limpiar-historial" 
+            (click)="reportePDF()">
+            PDF
+          </button>
+          <button 
+            class="btn-limpiar-historial" 
             (click)="limpiarHistorial()"
             *ngIf="historialGanadores.length > 0">
             🗑️ Limpiar Historial
@@ -96,7 +101,7 @@
             </thead>
             <tbody>
               <tr *ngFor="let ganador of historialGanadores; let i = index">
-                <td>{{ i + 1 }}</td>
+                <td>{{ historialGanadores.length - i }}</td>
                 <td>
                   <strong>{{ ganador.ganador || 'Por asignar' }}</strong>
                 </td>
