@@ -32,15 +32,15 @@ export class SorteoStateService {
   private channel: BroadcastChannel | null = null;
 
   constructor() {
-    console.log('🎄 SorteoStateService inicializado');
+    // console.log('🎄 SorteoStateService inicializado');
     
     // Intentar crear BroadcastChannel (no todos los navegadores lo soportan)
     try {
       this.channel = new BroadcastChannel('sorteo-channel');
-      console.log('✅ BroadcastChannel creado');
+      // console.log('✅ BroadcastChannel creado');
       
       this.channel.onmessage = (event: MessageEvent<SorteoMessage>) => {
-        console.log('📨 Mensaje recibido via BroadcastChannel:', event.data);
+        // console.log('📨 Mensaje recibido via BroadcastChannel:', event.data);
         this.handleMessage(event.data);
       };
     } catch (e) {
@@ -49,10 +49,10 @@ export class SorteoStateService {
 
     // Escuchar cambios en localStorage (funciona en todos los navegadores)
     window.addEventListener('storage', (event) => {
-      console.log('📦 Storage event detectado:', event.key);
+      // console.log('📦 Storage event detectado:', event.key);
       
       if (event.key === 'sorteo-state' && event.newValue) {
-        console.log('📦 Nuevo valor en storage:', event.newValue);
+        // console.log('📦 Nuevo valor en storage:', event.newValue);
         try {
           const state = JSON.parse(event.newValue);
           this.applyState(state);
@@ -76,7 +76,7 @@ export class SorteoStateService {
   private checkStorageChanges() {
     const current = localStorage.getItem('sorteo-state');
     if (current && current !== this.lastStorageCheck) {
-      console.log('🔄 Cambio detectado en storage (poll)');
+      // console.log('🔄 Cambio detectado en storage (poll)');
       this.lastStorageCheck = current;
       try {
         const state = JSON.parse(current);
@@ -88,12 +88,12 @@ export class SorteoStateService {
   }
 
   private applyState(state: any) {
-    console.log('🎯 Aplicando estado:', state);
+    // console.log('🎯 Aplicando estado:', state);
     
     if (state.resultado !== undefined) {
       const currentResultado = this.resultadoActualSubject.value;
       if (JSON.stringify(currentResultado) !== JSON.stringify(state.resultado)) {
-        console.log('📝 Actualizando resultado');
+        // console.log('📝 Actualizando resultado');
         this.resultadoActualSubject.next(state.resultado);
       }
     }
@@ -101,7 +101,7 @@ export class SorteoStateService {
     if (state.mostrando !== undefined) {
       const currentMostrando = this.mostrandoResultadoSubject.value;
       if (currentMostrando !== state.mostrando) {
-        console.log('👁️ Actualizando mostrando:', state.mostrando);
+        // console.log('👁️ Actualizando mostrando:', state.mostrando);
         this.mostrandoResultadoSubject.next(state.mostrando);
       }
     }
@@ -109,21 +109,21 @@ export class SorteoStateService {
     if (state.historial) {
       const currentHistorial = this.historialSubject.value;
       if (JSON.stringify(currentHistorial) !== JSON.stringify(state.historial)) {
-        console.log('📋 Actualizando historial');
+        // console.log('📋 Actualizando historial');
         this.historialSubject.next(state.historial);
       }
     }
   }
 
   private handleMessage(message: SorteoMessage) {
-    console.log('⚙️ Procesando mensaje:', message);
+    // console.log('⚙️ Procesando mensaje:', message);
     
     switch (message.type) {
       case 'resultado':
         this.resultadoActualSubject.next(message.data);
         break;
       case 'mostrando':
-        console.log('⚙️ Actualizando mostrando desde mensaje:', message.data);
+        // console.log('⚙️ Actualizando mostrando desde mensaje:', message.data);
         this.mostrandoResultadoSubject.next(message.data);
         break;
       case 'historial':
@@ -141,12 +141,12 @@ export class SorteoStateService {
 
   private broadcast(message: SorteoMessage) {
     message.timestamp = Date.now();
-    console.log('📡 Enviando broadcast:', message);
+    // console.log('📡 Enviando broadcast:', message);
     
     if (this.channel) {
       try {
         this.channel.postMessage(message);
-        console.log('✅ Mensaje enviado via BroadcastChannel');
+        // console.log('✅ Mensaje enviado via BroadcastChannel');
       } catch (e) {
         console.error('❌ Error enviando via BroadcastChannel:', e);
       }
@@ -164,7 +164,7 @@ export class SorteoStateService {
     const stateStr = JSON.stringify(state);
     localStorage.setItem('sorteo-state', stateStr);
     this.lastStorageCheck = stateStr;
-    console.log('💾 Estado guardado en localStorage:', state);
+    // console.log('💾 Estado guardado en localStorage:', state);
   }
 
   private loadFromStorage() {
@@ -172,33 +172,33 @@ export class SorteoStateService {
     if (savedState) {
       try {
         const state = JSON.parse(savedState);
-        console.log('📂 Estado cargado desde localStorage:', state);
+        // console.log('📂 Estado cargado desde localStorage:', state);
         this.applyState(state);
       } catch (e) {
         console.error('❌ Error al cargar estado:', e);
       }
     } else {
-      console.log('📭 No hay estado guardado en localStorage');
+      // console.log('📭 No hay estado guardado en localStorage');
     }
   }
 
   // Métodos públicos
   setResultado(resultado: Resultado | null) {
-    console.log('🎁 setResultado llamado:', resultado);
+    // console.log('🎁 setResultado llamado:', resultado);
     this.resultadoActualSubject.next(resultado);
     this.broadcast({ type: 'resultado', data: resultado });
     this.saveToStorage();
   }
 
   setMostrandoResultado(mostrando: boolean) {
-    console.log('👁️ setMostrandoResultado llamado:', mostrando);
+    // console.log('👁️ setMostrandoResultado llamado:', mostrando);
     this.mostrandoResultadoSubject.next(mostrando);
     this.broadcast({ type: 'mostrando', data: mostrando });
     this.saveToStorage();
   }
 
   agregarAlHistorial(resultado: Resultado) {
-    console.log('📋 agregarAlHistorial llamado:', resultado);
+    // console.log('📋 agregarAlHistorial llamado:', resultado);
     const historialActual = this.historialSubject.value;
     const nuevoHistorial = [resultado, ...historialActual];
     this.historialSubject.next(nuevoHistorial);
@@ -207,7 +207,7 @@ export class SorteoStateService {
   }
 
   limpiarResultado() {
-    console.log('🧹 limpiarResultado llamado');
+    // console.log('🧹 limpiarResultado llamado');
     this.resultadoActualSubject.next(null);
     this.mostrandoResultadoSubject.next(false);
     this.broadcast({ type: 'limpiar' });
@@ -215,7 +215,7 @@ export class SorteoStateService {
   }
 
   limpiarHistorial() {
-    console.log('🗑️ limpiarHistorial llamado');
+    // console.log('🗑️ limpiarHistorial llamado');
     this.historialSubject.next([]);
     this.broadcast({ type: 'limpiarHistorial' });
     this.saveToStorage();
