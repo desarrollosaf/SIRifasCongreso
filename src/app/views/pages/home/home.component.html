@@ -55,12 +55,12 @@
   class="premio-preview" />
           <div class="resultado-info">
             <h4>{{ resultadoActual?.premio }}</h4>
-            <p class="ganador" *ngIf="resultadoActual?.ganador">
+            <!-- <p class="ganador" *ngIf="resultadoActual?.ganador">
               👤 Ganador: <strong>{{ resultadoActual.ganador }}</strong>
             </p>
             <p class="ganador" *ngIf="!resultadoActual?.ganador">
               👤 Ganador: <strong>Por asignar</strong>
-            </p>
+            </p> -->
             <p class="cantidad">Cantidad: {{ resultadoActual?.cantidad }}</p>
           </div>
         </div>
@@ -150,16 +150,14 @@
 
       <!-- Resultado del sorteo (cuando SÍ hay resultado Y se está mostrando) -->
       <div class="premio-ganador" *ngIf="mostrandoResultado && resultadoActual">
-        <div class="confetti-animation">🎊 🎉 ✨</div>
-        
+
         <div class="ganador-nombre" *ngIf="resultadoActual?.ganador">
-          <h2 class="pulse-animation">¡Felicidades!</h2>
           <h1 class="ganador-text">{{ resultadoActual.ganador }}</h1>
         </div>
         
-        <div class="ganador-nombre" *ngIf="!resultadoActual?.ganador">
+        <!-- <div class="ganador-nombre" *ngIf="!resultadoActual?.ganador">
           <h2 class="pulse-animation">¡Tenemos un ganador!</h2>
-        </div>
+        </div> -->
 
         <div >
         <img 
