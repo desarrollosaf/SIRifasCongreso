@@ -9,6 +9,7 @@ import { AbstractControl, FormBuilder, FormGroup, FormsModule, NgModel, Reactive
 import { RifaService } from '../../../service/rifa.service';
 import { SorteoStateService, Resultado } from '../../../service/sorteo-state.service';
 import { Subscription } from 'rxjs';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-home',
@@ -31,6 +32,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   resultadoActual: Resultado | null = null;
   historialGanadores: Resultado[] = [];
   tipo: number = 0;
+  totalPremios: number = 100;
   mostrandoResultado: boolean = false;
   cargandoSorteo: boolean = false;
 
@@ -42,6 +44,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     private modelService: NgbModal,
     private fb: FormBuilder,
     private aRouter: ActivatedRoute,
+    private cd: ChangeDetectorRef 
   ) {
     this.formRifa = this.fb.group({
       busqueda: [''],
@@ -101,7 +104,11 @@ export class HomeComponent implements OnInit, OnDestroy {
     
     this._rifa.numRadom().subscribe({
       next: (response: any) => {
-        if(!response){
+        console.log(response)
+        this.totalPremios = response.total
+        this.cd.markForCheck();
+         console.log('premio',this.totalPremios)
+        if(!response.data){
            Swal.fire({
               icon: 'warning',
               title: '¡Premios terminados!',
@@ -112,9 +119,9 @@ export class HomeComponent implements OnInit, OnDestroy {
         }else{
 
           console.log('=== RESPUESTA RECIBIDA ===');
-          console.log('Response completo:', response);
+          console.log('Response completo:', response.data);
           
-          const resultado = response as Resultado;
+          const resultado = response.data as Resultado;
           this.sorteoState.setResultado(resultado);
           this.sorteoState.agregarAlHistorial(resultado);
         
@@ -152,7 +159,14 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   reportePDF(){
-    console.log('Generando PDF')
+     this._rifa.reporte().subscribe((pdfBlob: Blob) => {
+        const url = window.URL.createObjectURL(pdfBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = "reporte_rifa.pdf";
+        a.click();
+        window.URL.revokeObjectURL(url);
+      });
   }
 
   limpiarResultado() {

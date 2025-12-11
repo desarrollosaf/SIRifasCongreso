@@ -1,7 +1,7 @@
 <div class="xmas-landing">
 
   <!-- Decoraciones de las esquinas -->
-  <img class="xmas-decoration deco-top-left"
+  <!-- <img class="xmas-decoration deco-top-left"
        src="images/navidad/superior izquierda.png"
        alt="Decoración navideña" />
 
@@ -11,7 +11,7 @@
 
   <img class="xmas-decoration deco-bottom-right"
        src="images/navidad/inferior derecha.png"
-       alt="Decoración navideña" />
+       alt="Decoración navideña" /> -->
 
   <!-- ============================================ -->
   <!-- VISTA ADMIN (tipo = 1) -->
@@ -20,7 +20,7 @@
     
     <header class="xmas-header">
       <div class="xmas-logos">
-        <img src="images/navidad/logos.png" alt="Escudo" />
+        <!-- <img src="images/navidad/logos.png" alt="Escudo" /> -->
       </div>
       <h1 class="admin-title">Panel de Administración - Sorteo Navideño 2025</h1>
     </header>
@@ -128,7 +128,7 @@
     
     <header class="xmas-header">
       <div class="xmas-logos">
-        <img src="images/navidad/logos.png" alt="Escudo" />
+        <!-- <img src="images/navidad/logos.png" alt="Escudo" /> -->
       </div>
     </header>
 
@@ -142,11 +142,12 @@
       </div>-->
       
       <!-- Gif de espera (cuando NO hay resultado o NO se está mostrando) -->
+       
       <div class="xmas-gif-wrapper" *ngIf="!mostrandoResultado || !resultadoActual">
         <div class="xmas-text">
-          <p class="xmas-badge">Fin de Año 2025</p>
+          <p class="xmas-badge">{{ totalPremios }}</p>
           <h1 class="xmas-title"></h1>
-          <p class="xmas-subtitle">Esperando el próximo sorteo...</p>
+          <!-- <p class="xmas-subtitle">Esperando el próximo sorteo...</p> -->
         </div>
         <img src="images/gifs/tombolaBl.gif"
              alt="Premios de fin de año"
@@ -155,7 +156,7 @@
 
       <!-- Resultado del sorteo (cuando SÍ hay resultado Y se está mostrando) -->
       <div class="premio-ganador" *ngIf="mostrandoResultado && resultadoActual">
-
+        <p class="xmas-badge">{{ totalPremios }}</p>
         <div class="ganador-nombre" *ngIf="resultadoActual?.ganador">
           <h1 class="ganador-text">{{ resultadoActual.ganador }}</h1>
         </div>
