@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink, Router, ActivatedRoute, RouteReuseStrategy, RouterModule } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { NgxDatatableModule } from '@siemens/ngx-datatable';
@@ -7,13 +7,11 @@ import Swal from 'sweetalert2';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, NgModel, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { RifaService } from '../../../service/rifa.service';
-import { SorteoStateService, Resultado } from '../../../service/sorteo-state.service';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-home',
-  imports: [
-    NgxDatatableModule,
+   imports: [
+     NgxDatatableModule,
     CommonModule,
     FormsModule,
     ReactiveFormsModule, 
@@ -22,38 +20,28 @@ import { Subscription } from 'rxjs';
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
-export class HomeComponent implements OnInit, OnDestroy {
+export class HomeComponent {
 
   public _rifa = inject(RifaService);
-  public sorteoState = inject(SorteoStateService);
-  
   formRifa: any;
-  resultadoActual: Resultado | null = null;
-  historialGanadores: Resultado[] = [];
+  resultados: any = {};
   tipo: number = 0;
-  mostrandoResultado: boolean = false;
-  cargandoSorteo: boolean = false;
-
-  // Subscripciones para limpiar en OnDestroy
-  private subscriptions: Subscription[] = [];
-
   constructor(
-    private router: Router, 
-    private modelService: NgbModal,
-    private fb: FormBuilder,
-    private aRouter: ActivatedRoute,
-  ) {
-    this.formRifa = this.fb.group({
-      busqueda: [''],
-    });
+      private router: Router, 
+      private modelService: NgbModal,
+      private fb: FormBuilder,
+      private  aRouter: ActivatedRoute,
+    ){
+      this.formRifa = this.fb.group({
+        busqueda: [''],
+      });
   }
 
   ngOnInit() {
-    // Obtener el parámetro tipo
     this.aRouter.paramMap.subscribe(params => {
       const tipo = params.get('tipo');  
       this.tipo = Number(tipo);
-      console.log("Parámetro recibido - tipo:", this.tipo);
+      console.log("Parámetro recibido:", this.tipo);
     });
   }
 
