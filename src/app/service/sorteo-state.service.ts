@@ -11,7 +11,7 @@ export interface Resultado {
 }
 
 interface SorteoMessage {
-  type: 'resultado' | 'mostrando' | 'historial' | 'limpiar' | 'limpiarHistorial';
+  type: 'resultado' | 'mostrando' | 'historial' | 'limpiar' | 'limpiarHistorial'  | 'totalPremios';
   data?: any;
   timestamp?: number;
 }
@@ -24,6 +24,9 @@ export class SorteoStateService {
   private resultadoActualSubject = new BehaviorSubject<Resultado | null>(null);
   private mostrandoResultadoSubject = new BehaviorSubject<boolean>(false);
   private historialSubject = new BehaviorSubject<Resultado[]>([]);
+
+  private totalPremiosSubject = new BehaviorSubject<number>(100);
+  totalPremios$ = this.totalPremiosSubject.asObservable();
 
   resultadoActual$: Observable<Resultado | null> = this.resultadoActualSubject.asObservable();
   mostrandoResultado$: Observable<boolean> = this.mostrandoResultadoSubject.asObservable();
@@ -97,6 +100,13 @@ export class SorteoStateService {
         this.resultadoActualSubject.next(state.resultado);
       }
     }
+
+    if (state.totalPremios !== undefined) {
+      const current = this.totalPremiosSubject.value;
+      if (current !== state.totalPremios) {
+        this.totalPremiosSubject.next(state.totalPremios);
+      }
+    }
     
     if (state.mostrando !== undefined) {
       const currentMostrando = this.mostrandoResultadoSubject.value;
@@ -133,6 +143,9 @@ export class SorteoStateService {
         this.resultadoActualSubject.next(null);
         this.mostrandoResultadoSubject.next(false);
         break;
+      case 'totalPremios':
+        this.totalPremiosSubject.next(message.data);
+        break;
       case 'limpiarHistorial':
         this.historialSubject.next([]);
         break;
@@ -158,6 +171,7 @@ export class SorteoStateService {
       resultado: this.resultadoActualSubject.value,
       mostrando: this.mostrandoResultadoSubject.value,
       historial: this.historialSubject.value,
+      totalPremios: this.totalPremiosSubject.value,
       timestamp: Date.now()
     };
     
@@ -189,6 +203,14 @@ export class SorteoStateService {
     this.broadcast({ type: 'resultado', data: resultado });
     this.saveToStorage();
   }
+
+  setTotalPremios(total: number) {
+    this.totalPremiosSubject.next(total);
+
+    this.broadcast({ type: 'totalPremios', data: total });
+    this.saveToStorage();
+  }
+
 
   setMostrandoResultado(mostrando: boolean) {
     // console.log('👁️ setMostrandoResultado llamado:', mostrando);

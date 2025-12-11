@@ -75,6 +75,12 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.historialGanadores = historial;
     });
 
+    const totalSub = this.sorteoState.totalPremios$.subscribe(v => {
+      this.totalPremios = v;
+    });
+
+    this.subscriptions.push(totalSub);
+
     this.subscriptions.push(resultadoSub, mostrandoSub, historialSub);
   }
 
@@ -105,9 +111,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this._rifa.numRadom().subscribe({
       next: (response: any) => {
         console.log(response)
-        this.totalPremios = response.total
-        this.cd.markForCheck();
-         console.log('premio',this.totalPremios)
+       this.sorteoState.setTotalPremios(response.total);
         if(!response.data){
            Swal.fire({
               icon: 'warning',

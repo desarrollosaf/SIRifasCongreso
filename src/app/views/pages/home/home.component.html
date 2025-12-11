@@ -145,22 +145,22 @@
        
       <div class="xmas-gif-wrapper" *ngIf="!mostrandoResultado || !resultadoActual">
         <div class="xmas-text">
-          <p class="xmas-badge">{{ totalPremios }}</p>
+          
           <h1 class="xmas-title"></h1>
           <!-- <p class="xmas-subtitle">Esperando el próximo sorteo...</p> -->
         </div>
         <img src="images/gifs/tombolaBl.gif"
              alt="Premios de fin de año"
-             class="xmas-gif" />
+             class="xmas-gif-xx" />
       </div>
 
       <!-- Resultado del sorteo (cuando SÍ hay resultado Y se está mostrando) -->
       <div class="premio-ganador" *ngIf="mostrandoResultado && resultadoActual">
-        <p class="xmas-badge">{{ totalPremios }}</p>
+        <p class="xmas-badge-xx">{{ totalPremios }} </p>
         <div class="ganador-nombre" *ngIf="resultadoActual?.ganador">
           <h1 class="ganador-text">{{ resultadoActual.ganador }}</h1>
         </div>
-        
+          
         <!-- <div class="ganador-nombre" *ngIf="!resultadoActual?.ganador">
           <h2 class="pulse-animation">¡Tenemos un ganador!</h2>
         </div> -->
@@ -169,7 +169,7 @@
         <img 
           [src]="'images/navidad/regalos/' + (resultadoActual?.id || 0) + '.jpg'" 
           [alt]="resultadoActual?.premio || 'Premio'"
-          class="premio-imagen bounce-animation"  class="xmas-gif"/>
+          class="premio-imagen bounce-animation"  class="xmas-gif-xx"/>
           
           <!-- <div class="premio-nombre">
             <h3>{{ resultadoActual?.premio }}</h3>
