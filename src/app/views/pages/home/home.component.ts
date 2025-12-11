@@ -101,33 +101,42 @@ export class HomeComponent implements OnInit, OnDestroy {
     
     this._rifa.numRadom().subscribe({
       next: (response: any) => {
-        console.log('=== RESPUESTA RECIBIDA ===');
-        console.log('Response completo:', response);
-        
-        const resultado = response as Resultado;
-        
-        // Actualizar el estado en el servicio compartido
-        this.sorteoState.setResultado(resultado);
-        this.sorteoState.agregarAlHistorial(resultado);
-        
-        // Mostrar resultado después de un momento
-        setTimeout(() => {
-          this.sorteoState.setMostrandoResultado(true);
-          this.cargandoSorteo = false;
-          console.log('===ESTADO RESULTADO==: ' ,this.mostrandoResultado);
-          console.log('Estado actualizado en servicio compartido');
-          console.log('=== FIN SORTEO ===');
-          
-          if (this.tipo === 1) {
-            Swal.fire({
-              icon: 'success',
-              title: '¡Sorteo realizado!',
-              text: `Premio: ${resultado.premio}`,
+        if(!response){
+           Swal.fire({
+              icon: 'warning',
+              title: '¡Premios terminados!',
               timer: 2000,
               showConfirmButton: false
             });
-          }
-        }, 1000);
+
+        }else{
+
+          console.log('=== RESPUESTA RECIBIDA ===');
+          console.log('Response completo:', response);
+          
+          const resultado = response as Resultado;
+          this.sorteoState.setResultado(resultado);
+          this.sorteoState.agregarAlHistorial(resultado);
+        
+          setTimeout(() => {
+            this.sorteoState.setMostrandoResultado(true);
+            this.cargandoSorteo = false;
+            console.log('===ESTADO RESULTADO==: ' ,this.mostrandoResultado);
+            console.log('Estado actualizado en servicio compartido');
+            console.log('=== FIN SORTEO ===');
+            
+            if (this.tipo === 1) {
+              Swal.fire({
+                icon: 'success',
+                title: '¡Sorteo realizado!',
+                text: `Premio: ${resultado.premio}`,
+                timer: 2000,
+                showConfirmButton: false
+              });
+            }
+          }, 1000); 
+
+        }
       },
       error: (e: HttpErrorResponse) => {
         console.error('=== ERROR EN SORTEO ===', e);
@@ -140,6 +149,10 @@ export class HomeComponent implements OnInit, OnDestroy {
         });
       }
     });
+  }
+
+  reportePDF(){
+    console.log('Generando PDF')
   }
 
   limpiarResultado() {
