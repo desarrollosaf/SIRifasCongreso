@@ -129,12 +129,12 @@
 
     <main class="xmas-main public-main">
       
-      <!-- DEBUG: Muestra el estado actual -->
+      <!-- DEBUG: Muestra el estado actual 
       <div style="position: fixed; top: 10px; right: 10px; background: yellow; padding: 10px; z-index: 9999; font-size: 12px;">
         <div>mostrandoResultado: {{ mostrandoResultado }}</div>
         <div>resultadoActual: {{ resultadoActual ? 'SI' : 'NO' }}</div>
         <div>ID: {{ resultadoActual?.id }}</div>
-      </div>
+      </div>-->
       
       <!-- Gif de espera (cuando NO hay resultado o NO se está mostrando) -->
       <div class="xmas-gif-wrapper" *ngIf="!mostrandoResultado || !resultadoActual">
