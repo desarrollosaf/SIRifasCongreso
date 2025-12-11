@@ -2,14 +2,14 @@
   "development": {
      "username": "usr_rifas",
      "password": "0aoqzV3gtddpDc97gQZPleElW",
-     "database": "rifas",
+     "database": "congresoedomex_rifas",
      "host": "192.168.36.53",
      "dialect": "mysql"
   },
   "production": {
     "username": "usr_rifas",
     "password": "0aoqzV3gtddpDc97gQZPleElW",
-    "database": "rifas",
+    "database": "congresoedomex_rifas",
     "host": "192.168.36.53",
     "dialect": "mysql"
   }
