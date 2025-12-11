@@ -1,16 +1,16 @@
 {
   "development": {
-     "username": "homestead",
-     "password": "secret",
+     "username": "usr_rifas",
+     "password": "0aoqzV3gtddpDc97gQZPleElW",
      "database": "rifas",
-     "host": "192.168.10.10",
+     "host": "192.168.36.53",
      "dialect": "mysql"
   },
   "production": {
-    "username": "homestead",
-    "password": "secret",
+    "username": "usr_rifas",
+    "password": "0aoqzV3gtddpDc97gQZPleElW",
     "database": "rifas",
-    "host": "192.168.10.10",
+    "host": "192.168.36.53",
     "dialect": "mysql"
   }
 }
