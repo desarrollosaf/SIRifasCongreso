@@ -14,8 +14,12 @@ export class RifaService {
     this.myAppUrl = enviroment.endpoint;
   }
 
-   numRadom() {
-    const url = `${this.myAppUrl}${this.myAPIUrl}`;
-    return this.http.get(url, { withCredentials: true });
+  //  numRadom() {
+  //   const url = `${this.myAppUrl}${this.myAPIUrl}`;
+  //   return this.http.get(url, { withCredentials: true });
+  // }
+
+  numRadom(): Observable<any> {
+    return this.http.get<any>(`${this.myAppUrl}${this.myAPIUrl}/rifas/`)
   }
 }

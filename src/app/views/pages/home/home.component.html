@@ -4,10 +4,6 @@
   <img class="xmas-decoration deco-top-left"
        src="images/navidad/superior izquierda.png"
        alt="Decoración navideña" />
-<!-- 
-  <img class="xmas-decoration deco-top-right"
-       src=""
-       alt="Decoración navideña" /> -->
 
   <img class="xmas-decoration deco-bottom-left"
        src="images/navidad/inferior izquierda.png"
@@ -17,35 +13,170 @@
        src="images/navidad/inferior derecha.png"
        alt="Decoración navideña" />
 
-  <!-- Contenido principal -->
-  <div class="xmas-inner">
+  <!-- ============================================ -->
+  <!-- VISTA ADMIN (tipo = 1) -->
+  <!-- ============================================ -->
+  <div *ngIf="tipo === 1" class="xmas-inner admin-view">
+    
+    <header class="xmas-header">
+      <div class="xmas-logos">
+        <img src="images/navidad/logos.png" alt="Escudo" />
+      </div>
+      <h1 class="admin-title">Panel de Administración - Sorteo Navideño 2025</h1>
+    </header>
 
-    <!-- fila de logos (opcional) -->
+    <main class="xmas-main admin-main">
+      
+      <!-- Controles del sorteo -->
+      <div class="admin-controls">
+        <button 
+          class="btn-sorteo" 
+          (click)="sorteo()"
+          [disabled]="cargandoSorteo">
+          <span *ngIf="!cargandoSorteo">🎲 Realizar Sorteo</span>
+          <span *ngIf="cargandoSorteo">⏳ Sorteando...</span>
+        </button>
+
+        <button 
+          class="btn-limpiar" 
+          (click)="limpiarResultado()"
+          [disabled]="!mostrandoResultado">
+          🧹 Limpiar Pantalla Pública
+        </button>
+      </div>
+
+      <!-- Resultado actual -->
+      <div class="resultado-actual" *ngIf="resultadoActual && mostrandoResultado">
+        <h3>🎁 Resultado Actual en Pantalla:</h3>
+        <div class="resultado-card">
+     <img 
+  [src]="'images/navidad/regalos/' + (resultadoActual?.id || 0) + '.jpg'" 
+  [alt]="resultadoActual?.premio || 'Premio'"
+  class="premio-preview" />
+          <div class="resultado-info">
+            <h4>{{ resultadoActual?.premio }}</h4>
+            <p class="ganador" *ngIf="resultadoActual?.ganador">
+              👤 Ganador: <strong>{{ resultadoActual.ganador }}</strong>
+            </p>
+            <p class="ganador" *ngIf="!resultadoActual?.ganador">
+              👤 Ganador: <strong>Por asignar</strong>
+            </p>
+            <p class="cantidad">Cantidad: {{ resultadoActual?.cantidad }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mensaje si no hay resultado -->
+      <div class="no-resultado" *ngIf="!resultadoActual || !mostrandoResultado">
+        <p>👆 Presiona "Realizar Sorteo" para comenzar</p>
+      </div>
+
+      <!-- Historial de ganadores -->
+      <div class="historial-section">
+        <div class="historial-header">
+          <h3>📋 Historial de Ganadores</h3>
+          <button 
+            class="btn-limpiar-historial" 
+            (click)="limpiarHistorial()"
+            *ngIf="historialGanadores.length > 0">
+            🗑️ Limpiar Historial
+          </button>
+        </div>
+
+        <div class="tabla-container" *ngIf="historialGanadores.length > 0">
+          <table class="tabla-ganadores">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Ganador</th>
+                <th>Premio</th>
+                <th>Cantidad</th>
+                <th>Fecha</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let ganador of historialGanadores; let i = index">
+                <td>{{ i + 1 }}</td>
+                <td>
+                  <strong>{{ ganador.ganador || 'Por asignar' }}</strong>
+                </td>
+                <td>{{ ganador.premio }}</td>
+                <td>{{ ganador.cantidad }}</td>
+                <td>{{ ganador.createdAt | date:'short' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="no-historial" *ngIf="historialGanadores.length === 0">
+          <p>📭 No hay sorteos realizados aún</p>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- VISTA PÚBLICA (tipo = 0) -->
+  <!-- ============================================ -->
+  <div *ngIf="tipo === 0" class="xmas-inner public-view">
+    
     <header class="xmas-header">
       <div class="xmas-logos">
         <img src="images/navidad/logos.png" alt="Escudo" />
       </div>
     </header>
 
-    <main class="xmas-main">
-      <div class="xmas-text">
-        <p class="xmas-badge">Fin de Año 2025</p>
-        <h1 class="xmas-title">¡Celebremos juntos esta Navidad!</h1>
-        <p class="xmas-subtitle">
-        </p>
-      </div>
-
+    <main class="xmas-main public-main">
       
-      <div *ngIf="tipo === 1">
-        <button type="submit" (click)="sorteo()">Ruleta</button>
+      <!-- DEBUG: Muestra el estado actual -->
+      <div style="position: fixed; top: 10px; right: 10px; background: yellow; padding: 10px; z-index: 9999; font-size: 12px;">
+        <div>mostrandoResultado: {{ mostrandoResultado }}</div>
+        <div>resultadoActual: {{ resultadoActual ? 'SI' : 'NO' }}</div>
+        <div>ID: {{ resultadoActual?.id }}</div>
       </div>
-      <div class="xmas-gif-wrapper" *ngIf="tipo === 0">
-        <!-- Aquí va tu GIF -->
+      
+      <!-- Gif de espera (cuando NO hay resultado o NO se está mostrando) -->
+      <div class="xmas-gif-wrapper" *ngIf="!mostrandoResultado || !resultadoActual">
+        <div class="xmas-text">
+          <p class="xmas-badge">Fin de Año 2025</p>
+          <h1 class="xmas-title">¡Celebremos juntos esta Navidad!</h1>
+          <p class="xmas-subtitle">Esperando el próximo sorteo...</p>
+        </div>
         <img src="images/gifs/tombolaBl.gif"
              alt="Premios de fin de año"
              class="xmas-gif" />
       </div>
-    </main>
 
+      <!-- Resultado del sorteo (cuando SÍ hay resultado Y se está mostrando) -->
+      <div class="premio-ganador" *ngIf="mostrandoResultado && resultadoActual">
+        <div class="confetti-animation">🎊 🎉 ✨</div>
+        
+        <div class="ganador-nombre" *ngIf="resultadoActual?.ganador">
+          <h2 class="pulse-animation">¡Felicidades!</h2>
+          <h1 class="ganador-text">{{ resultadoActual.ganador }}</h1>
+        </div>
+        
+        <div class="ganador-nombre" *ngIf="!resultadoActual?.ganador">
+          <h2 class="pulse-animation">¡Tenemos un ganador!</h2>
+        </div>
+
+        <div class="premio-visual">
+        <img 
+  [src]="'images/navidad/regalos/' + (resultadoActual?.id || 0) + '.jpg'" 
+  [alt]="resultadoActual?.premio || 'Premio'"
+  class="premio-imagen bounce-animation" />
+          
+          <div class="premio-nombre">
+            <h3>{{ resultadoActual?.premio }}</h3>
+            <p class="cantidad-badge" *ngIf="resultadoActual?.cantidad && resultadoActual.cantidad > 1">
+              Cantidad: {{ resultadoActual.cantidad }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </main>
   </div>
+
 </div>

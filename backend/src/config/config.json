@@ -1,9 +1,9 @@
 {
   "development": {
-     "username": "usr_jornadamujeres",
-     "password": "4UYxXzz6wIuAxvfzN0z7",
-     "database": "adminplem_jornadamujeres",
-     "host": "192.168.36.53",
+     "username": "root",
+     "password": "",
+     "database": "rifas",
+     "host": "localhost",
      "dialect": "mysql"
   },
   "production": {
