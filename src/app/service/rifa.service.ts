@@ -22,4 +22,10 @@ export class RifaService {
   numRadom(): Observable<any> {
     return this.http.get<any>(`${this.myAppUrl}${this.myAPIUrl}/rifas/`)
   }
+
+  reporte(): Observable<Blob> {
+      return this.http.get(`${this.myAppUrl}${this.myAPIUrl}/reporte/`, {
+      responseType: 'blob'
+    })
+  }
 }

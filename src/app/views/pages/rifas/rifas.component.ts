@@ -41,4 +41,15 @@ constructor(
         this.resultados = resultados;
       });
     }
+
+    reporte(){
+        this._rifa.reporte().subscribe((pdfBlob: Blob) => {
+        const url = window.URL.createObjectURL(pdfBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = "reporte_rifa.pdf";
+        a.click();
+        window.URL.revokeObjectURL(url);
+      });
+    }
   }

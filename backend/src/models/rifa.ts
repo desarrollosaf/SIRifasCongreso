@@ -8,6 +8,7 @@ import{
 } from 'sequelize';
 
 import sequelize from '../database/cuestionariosConnection';
+import Regalos from './regalos';
 
 
 class Rifa extends Model<
@@ -18,6 +19,8 @@ class Rifa extends Model<
     declare id_premio: number | null;
     declare createdAt?: Date;
     declare updatedAt?: Date;
+
+    declare m_regalo?: Regalos[];
     }
 
     Rifa.init(
@@ -49,4 +52,9 @@ class Rifa extends Model<
             timestamps: true,
         }
     );
+
+    Rifa.belongsTo(Regalos,{
+        foreignKey: "id_premio", as: "m_regalo"
+    })
+
     export default Rifa;

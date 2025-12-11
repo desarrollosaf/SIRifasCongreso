@@ -27,3 +27,40 @@ export const rifa = async (req: Request, res: Response): Promise<any> => {
     }
     res.json( regalo );
 }
+
+export const reporte = async (req: Request, res: Response): Promise<any> => {
+// app.get('/api/reporte', async (req: Request, res: Response) => {
+    const reporte = await Rifa.findAll({
+        include: [
+            {
+                model: Regalos,
+                as: "m_regalo",
+            }
+        ]
+    });
+
+    const PDFDocument = require('pdfkit');
+    const doc = new PDFDocument();
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename=reporte.pdf');
+
+    doc.pipe(res);
+
+    const horaGenerada = new Date().toLocaleString("es-MX", { hour12: false });
+
+    doc.fontSize(18).text('Reporte de Rifa', { align: 'center' });
+    doc.moveDown();
+    doc.fontSize(12).text(`Hora del reporte: ${horaGenerada}`);
+    doc.moveDown();
+
+    reporte.forEach((item, index) => {
+        doc.text(`Registro #${index + 1}`);
+        doc.text(`ID: ${item.id}`);
+        // doc.text(`Regalo: ${item.m_regalo?.premio}`);
+        doc.text(`Hora generado: ${item.createdAt}`);
+        doc.moveDown();
+    });
+
+    doc.end();
+};
