@@ -161,18 +161,18 @@
           <h2 class="pulse-animation">¡Tenemos un ganador!</h2>
         </div>
 
-        <div class="premio-visual">
+        <div >
         <img 
           [src]="'images/navidad/regalos/' + (resultadoActual?.id || 0) + '.jpg'" 
           [alt]="resultadoActual?.premio || 'Premio'"
-          class="premio-imagen bounce-animation" />
+          class="premio-imagen bounce-animation"  class="xmas-gif"/>
           
-          <div class="premio-nombre">
+          <!-- <div class="premio-nombre">
             <h3>{{ resultadoActual?.premio }}</h3>
-            <!-- <p class="cantidad-badge" *ngIf="resultadoActual?.cantidad && resultadoActual.cantidad > 1">
+           <p class="cantidad-badge" *ngIf="resultadoActual?.cantidad && resultadoActual.cantidad > 1">
               Cantidad: {{ resultadoActual.cantidad }}
-            </p> -->
-          </div>
+            </p> 
+          </div> -->
         </div>
       </div>
 
