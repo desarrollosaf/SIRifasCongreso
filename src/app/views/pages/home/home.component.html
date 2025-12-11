@@ -142,21 +142,23 @@
       </div>-->
       
       <!-- Gif de espera (cuando NO hay resultado o NO se está mostrando) -->
-       
+       <p class="letra-premio">{{ totalPremios }} </p>
       <div class="xmas-gif-wrapper" *ngIf="!mostrandoResultado || !resultadoActual">
         <div class="xmas-text">
-          <p class="letra-premio">{{ totalPremios }} </p>
+          <!-- <p class="letra-premio">{{ totalPremios }} </p> -->
           <h1 class="xmas-title"></h1>
           <!-- <p class="xmas-subtitle">Esperando el próximo sorteo...</p> -->
         </div>
-        <img src="images/gifs/tombolaBl.gif"
-             alt="Premios de fin de año"
-             class="xmas-gif-xx" />
+
+          <img src="images/gifs/tombolaBl.gif"
+            alt="Premios de fin de año"
+            class="xmas-gif-xx" />
+
       </div>
 
       <!-- Resultado del sorteo (cuando SÍ hay resultado Y se está mostrando) -->
       <div class="premio-ganador" *ngIf="mostrandoResultado && resultadoActual">
-        <p class="letra-premio">{{ totalPremios }} </p>
+        
         <div class="ganador-nombre" *ngIf="resultadoActual?.ganador">
           <h1 class="ganador-text">{{ resultadoActual.ganador }}</h1>
         </div>
