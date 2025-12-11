@@ -15,27 +15,25 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.rifa = void 0;
 const regalos_1 = __importDefault(require("../models/regalos"));
 const rifa_1 = __importDefault(require("../models/rifa"));
+const sequelize_1 = require("sequelize");
 const rifa = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { Op } = require('sequelize');
     let regalo = null;
-    let intentos = 0;
-    while (!regalo && intentos < 3) {
-        const numero = Math.floor(Math.random() * 16) + 1;
-        regalo = yield regalos_1.default.findOne({
-            where: {
-                id: numero,
-                cantidad: {
-                    [Op.gt]: 0
-                }
+    regalo = yield regalos_1.default.findOne({
+        where: {
+            cantidad: {
+                [Op.gt]: 0
             }
-        });
+        },
+        order: sequelize_1.Sequelize.literal('RAND()')
+    });
+    if (regalo != null) {
         yield (regalo === null || regalo === void 0 ? void 0 : regalo.update({
             cantidad: regalo.cantidad - 1
         }));
         yield rifa_1.default.create({
-            id_premio: numero,
+            id_premio: regalo === null || regalo === void 0 ? void 0 : regalo.id,
         });
-        intentos++;
     }
     res.json(regalo);
 });
