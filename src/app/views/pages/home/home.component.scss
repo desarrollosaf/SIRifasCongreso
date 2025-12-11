@@ -6,7 +6,7 @@
 .xmas-landing {
   position: relative;
   min-height: 100vh;
-  background-color: #ffffff;
+  background-color: #ffffff; // Tu imagen de background se mantiene
   box-sizing: border-box;
   overflow: hidden;
 }
@@ -17,17 +17,19 @@
   margin: 0 auto;
   padding: 24px 16px 32px;
   box-sizing: border-box;
+  position: relative;
+  z-index: 5;
 }
 
 /* DECORACIONES NAVIDEÑAS (NOCHESBUENAS / VELAS) */
-
 .xmas-decoration {
-  position: absolute;
+  position: fixed;
   pointer-events: none;
   user-select: none;
   max-width: 260px;
   width: 30vw;
   height: auto;
+  z-index: 10;
 }
 
 /* Ajusta estas clases según tus PNG (izq/der, arriba/abajo) */
@@ -56,11 +58,13 @@
 }
 
 /* HEADER CON LOGOS */
-
 .xmas-header {
   display: flex;
   justify-content: center;
   margin-bottom: 32px;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
 }
 
 .xmas-logos {
@@ -78,7 +82,6 @@
 }
 
 /* CONTENIDO CENTRAL */
-
 .xmas-main {
   display: flex;
   flex-direction: column;
@@ -87,17 +90,255 @@
   gap: 24px;
 }
 
-/* Texto “afirmativo navideño” */
+/* ============================================ */
+/* ESTILOS VISTA ADMIN */
+/* ============================================ */
+.admin-view {
+  max-width: 1400px;
+}
+
+.admin-title {
+  color: #444444;
+  text-align: center;
+  margin: 0;
+  font-size: clamp(1.5rem, 2vw, 2rem);
+  font-weight: 700;
+}
+
+.admin-main {
+  gap: 32px;
+}
+
+.admin-controls {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-sorteo,
+.btn-limpiar {
+  padding: 14px 28px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.btn-sorteo {
+  background: linear-gradient(135deg, #c41e3a 0%, #d32f2f 100%);
+  color: white;
+}
+
+.btn-limpiar {
+  background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+  color: white;
+}
+
+// Resultado actual
+.resultado-actual {
+  background: #f8f8f8;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  
+  h3 {
+    color: #8c4b18;
+    margin: 0 0 20px 0;
+    font-size: clamp(1.2rem, 1.5vw, 1.5rem);
+    font-weight: 700;
+  }
+}
+
+.resultado-card {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.premio-preview {
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
+  border-radius: 12px;
+  background: white;
+  padding: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+.resultado-info {
+  flex: 1;
+  text-align: left;
+  
+  @media (max-width: 768px) {
+    text-align: center;
+  }
+  
+  h4 {
+    color: #444444;
+    font-size: clamp(1.1rem, 1.3vw, 1.3rem);
+    margin: 0 0 12px 0;
+    font-weight: 600;
+  }
+  
+  .ganador {
+    color: #c41e3a;
+    font-size: 1.1rem;
+    margin: 8px 0;
+  }
+  
+  .cantidad {
+    color: #666666;
+    font-size: 0.95rem;
+    margin: 8px 0;
+  }
+}
+
+// Historial
+.historial-section {
+  background: #f8f8f8;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+}
+
+.historial-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+  
+  h3 {
+    color: #8c4b18;
+    font-size: clamp(1.2rem, 1.5vw, 1.5rem);
+    margin: 0;
+    font-weight: 700;
+  }
+}
+
+.btn-limpiar-historial {
+  padding: 8px 16px;
+  background: #f44336;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: #d32f2f;
+    transform: translateY(-1px);
+  }
+}
+
+.tabla-container {
+  overflow-x: auto;
+  border-radius: 8px;
+  background: white;
+}
+
+.tabla-ganadores {
+  width: 100%;
+  border-collapse: collapse;
+  
+  thead {
+    background: #8c4b18;
+    color: white;
+    
+    th {
+      padding: 14px 12px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+  }
+  
+  tbody {
+    tr {
+      border-bottom: 1px solid #e0e0e0;
+      transition: background 0.2s ease;
+      
+      &:hover {
+        background: #f5f5f5;
+      }
+      
+      td {
+        padding: 12px;
+        font-size: 0.9rem;
+        
+        &:first-child {
+          font-weight: 600;
+          color: #8c4b18;
+        }
+      }
+    }
+  }
+}
+
+.no-historial {
+  text-align: center;
+  padding: 40px 20px;
+  color: #999;
+  font-size: 1rem;
+}
+
+/* ============================================ */
+/* ESTILOS VISTA PÚBLICA */
+/* ============================================ */
+.public-view {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.public-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Texto "afirmativo navideño" */
+.xmas-text {
+  margin-bottom: 24px;
+}
+
 .xmas-badge {
   display: inline-block;
-  padding: 4px 12px;
+  padding: 6px 16px;
   border-radius: 999px;
   font-size: 0.9rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   background: #f7e4c7;
   color: #8c4b18;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
+  font-weight: 600;
 }
 
 .xmas-title {
@@ -114,11 +355,12 @@
 }
 
 /* GIF CENTRADO */
-
 .xmas-gif-wrapper {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  gap: 24px;
 }
 
 .xmas-gif {
@@ -126,9 +368,159 @@
   width: 60vw;
   height: auto;
   display: block;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
-/* Pequeños ajustes para pantallas muy chicas */
+// Premio ganador (vista pública)
+.premio-ganador {
+  text-align: center;
+  animation: fadeIn 1s ease;
+  padding: 20px;
+}
+
+.confetti-animation {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  animation: bounce 2s infinite;
+}
+
+.ganador-nombre {
+  margin-bottom: 24px;
+  
+  h2 {
+    font-size: clamp(1.8rem, 2.5vw, 2.5rem);
+    margin: 0 0 8px 0;
+    color: #8c4b18;
+    font-weight: 700;
+  }
+  
+  h1, .ganador-text {
+    font-size: clamp(2.5rem, 4vw, 4rem);
+    color: #c41e3a;
+    margin: 0;
+    font-weight: 800;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.premio-visual {
+  background: #f8f8f8;
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.premio-imagen {
+  max-width: 400px;
+  width: 100%;
+  height: auto;
+  margin-bottom: 20px;
+  border-radius: 12px;
+  background: white;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.premio-nombre {
+  h3 {
+    color: #444444;
+    font-size: clamp(1.5rem, 2vw, 2rem);
+    margin: 0 0 12px 0;
+    font-weight: 700;
+  }
+}
+
+.cantidad-badge {
+  background: #2196F3;
+  color: white;
+  padding: 8px 20px;
+  border-radius: 20px;
+  display: inline-block;
+  margin-top: 12px;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+/* ============================================ */
+/* ANIMACIONES */
+/* ============================================ */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03);
+  }
+}
+
+.pulse-animation {
+  animation: pulse 2s infinite;
+}
+
+.bounce-animation {
+  animation: bounce 2s infinite;
+}
+
+/* ============================================ */
+/* RESPONSIVE */
+/* ============================================ */
+@media (max-width: 768px) {
+  .xmas-inner {
+    padding: 16px 12px 24px;
+  }
+  
+  .xmas-logos img {
+    height: 70px;
+  }
+  
+  .admin-title {
+    font-size: 1.3rem;
+  }
+  
+  .btn-sorteo,
+  .btn-limpiar {
+    padding: 12px 20px;
+    font-size: 1rem;
+  }
+  
+  .premio-preview {
+    width: 150px;
+    height: 150px;
+  }
+  
+  .tabla-ganadores {
+    font-size: 0.85rem;
+    
+    thead th,
+    tbody td {
+      padding: 10px 8px;
+    }
+  }
+}
+
 @media (max-width: 480px) {
   .xmas-inner {
     padding-inline: 10px;
@@ -141,4 +533,27 @@
   .xmas-decoration {
     width: 42vw;
   }
+  
+  .confetti-animation {
+    font-size: 2rem;
+  }
+  
+  .premio-visual {
+    padding: 20px;
+  }
+  
+  .premio-imagen {
+    max-width: 280px;
+    padding: 12px;
+  }
+}
+
+.no-resultado {
+  text-align: center;
+  padding: 40px 20px;
+  color: #999;
+  font-size: 1.1rem;
+  background: #f8f8f8;
+  border-radius: 12px;
+  border: 2px dashed #ddd;
 }
