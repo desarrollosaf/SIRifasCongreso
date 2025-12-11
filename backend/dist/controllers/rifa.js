@@ -43,7 +43,6 @@ const rifa = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.rifa = rifa;
 const reporte = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    // app.get('/api/reporte', async (req: Request, res: Response) => {
     const reporte = yield rifa_1.default.findAll({
         include: [
             {
@@ -62,12 +61,27 @@ const reporte = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     doc.moveDown();
     doc.fontSize(12).text(`Hora del reporte: ${horaGenerada}`);
     doc.moveDown();
+    const tableTop = 140;
+    const col1 = 50; // #
+    const col2 = 100; // Nombre del regalo
+    const col3 = 350; // Fecha creación.
+    // Encabezados
+    doc.fontSize(12).font('Helvetica-Bold');
+    doc.text('#', col1, tableTop);
+    doc.text('Regalo', col2, tableTop);
+    doc.text('Fecha', col3, tableTop);
+    doc.moveTo(40, tableTop + 15)
+        .lineTo(560, tableTop + 15)
+        .stroke();
+    // Filas
+    doc.font('Helvetica');
+    let y = tableTop + 25;
     reporte.forEach((item, index) => {
-        doc.text(`Registro #${index + 1}`);
-        doc.text(`ID: ${item.id}`);
-        // doc.text(`Regalo: ${item.m_regalo?.premio}`);
-        doc.text(`Hora generado: ${item.createdAt}`);
-        doc.moveDown();
+        var _a;
+        doc.text(index + 1, col1, y);
+        doc.text((_a = item.m_regalo) === null || _a === void 0 ? void 0 : _a.premio, col2, y);
+        doc.text(item.createdAt, col3, y);
+        y += 20; // espacio entre filas
     });
     doc.end();
 });

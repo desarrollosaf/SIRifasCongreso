@@ -20,7 +20,7 @@ class Rifa extends Model<
     declare createdAt?: Date;
     declare updatedAt?: Date;
 
-    declare m_regalo?: Regalos[];
+    declare m_regalo?: Regalos;
     }
 
     Rifa.init(
@@ -54,7 +54,8 @@ class Rifa extends Model<
     );
 
     Rifa.belongsTo(Regalos,{
-        foreignKey: "id_premio", as: "m_regalo"
+        foreignKey: "id_premio", 
+        as: "m_regalo"
     })
 
     export default Rifa;

@@ -35,6 +35,7 @@ Rifa.init({
     timestamps: true,
 });
 Rifa.belongsTo(regalos_1.default, {
-    foreignKey: "id_premio", as: "m_regalo"
+    foreignKey: "id_premio",
+    as: "m_regalo"
 });
 exports.default = Rifa;
