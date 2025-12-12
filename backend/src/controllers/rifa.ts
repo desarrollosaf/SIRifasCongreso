@@ -139,7 +139,7 @@ export const reporte = async (req: Request, res: Response): Promise<any> => {
         doc.font("Helvetica").fontSize(12).fillColor("black");
         const horaGenerada = new Date().toLocaleString("es-MX", { hour12: false });
         doc.text(`Generado: ${horaGenerada}`, { align: "center" });
-        doc.moveDown(1);
+        doc.moveDown(0.5); // Reducido de 1 a 0.5
         
         // Encabezado de tabla
         const tableTop = doc.y;
@@ -149,7 +149,7 @@ export const reporte = async (req: Request, res: Response): Promise<any> => {
         doc.text("Regalo", col2X, tableTop);
         doc.text("Fecha", col3X, tableTop);
         doc.fillColor("black");
-        doc.moveDown(1);
+        doc.moveDown(0.5); // Reducido de 1 a 0.5
     };
     
     // Primera página
@@ -163,11 +163,11 @@ export const reporte = async (req: Request, res: Response): Promise<any> => {
         
         const premio = item.m_regalo?.premio || 'Sin premio';
         
-        // Calcular altura de la fila
+        // Calcular altura de la fila con menos padding
         const premioWidth = 340;
         const textHeight = doc.heightOfString(premio, { width: premioWidth, align: "left" });
-        const padding = 2;
-        const rowHeight = Math.max(20, textHeight + padding);
+        const padding = 4; // Reducido para menos espacio
+        const rowHeight = textHeight + padding;
         
         // Verificar si necesita nueva página
         if (doc.y + rowHeight + marginBottom > doc.page.height) {
@@ -185,21 +185,21 @@ export const reporte = async (req: Request, res: Response): Promise<any> => {
         
         // Escribir número
         doc.fillColor("#000000").font("Helvetica-Bold").fontSize(10);
-        doc.text(index + 1, col1X, rowY + 3);
+        doc.text(index + 1, col1X, rowY + 2); // Ajustado padding vertical
         
         // Escribir premio
         doc.fillColor("black").font("Helvetica").fontSize(9);
-        doc.text(premio, col2X, rowY + 3, { width: premioWidth });
+        doc.text(premio, col2X, rowY + 2, { width: premioWidth });
         
         // Escribir fecha
-        doc.text(fecha, col3X, rowY + 3, { width: 120 });
+        doc.text(fecha, col3X, rowY + 2, { width: 120 });
         
-        // Avanzar a la siguiente fila
-        doc.y = rowY + rowHeight + 3;
+        // Avanzar a la siguiente fila con menos espacio
+        doc.y = rowY + rowHeight + 1; // Reducido de 3 a 1
     });
     
     // Pie de página
-    doc.moveDown(2);
+    doc.moveDown(1); // Reducido de 2 a 1
     doc.fontSize(9).font("Helvetica-Oblique").fillColor("#7f8c8d")
         .text(`Generado el ${new Date().toLocaleString("es-MX", { hour12: false })}`, { align: "right" });
     
