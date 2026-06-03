@@ -1,4 +1,4 @@
-<div class="xmas-landing">
+<div class="xmas-landing" style="background-color: rgb(238, 237, 237);">
 
   <!-- Decoraciones de las esquinas -->
   <!-- <img class="xmas-decoration deco-top-left"
@@ -16,7 +16,7 @@
   <!-- ============================================ -->
   <!-- VISTA ADMIN (tipo = 1) -->
   <!-- ============================================ -->
-  <div *ngIf="tipo === 1" class="xmas-inner admin-view">
+  <div *ngIf="tipo === 1" class="xmas-inner admin-view" style="background-color: aquamarine;">
     
     <header class="xmas-header">
       <div class="xmas-logos">
@@ -124,7 +124,7 @@
   <!-- ============================================ -->
   <!-- VISTA PÚBLICA (tipo = 0) -->
   <!-- ============================================ -->
-  <div *ngIf="tipo === 0" class="xmas-inner public-view">
+  <div *ngIf="tipo === 0" class="xmas-inner public-view" style="background-color: rgb(238, 237, 237);">
     
     <header class="xmas-header">
       <div class="xmas-logos">
@@ -143,6 +143,12 @@
       
       <!-- Gif de espera (cuando NO hay resultado o NO se está mostrando) -->
        <p class="letra-premio">{{ totalPremios }} </p>
+       <button 
+          class="btn-sorteo" 
+          (click)="sorteo()"
+          [disabled]="cargandoSorteo">
+          <span *ngIf="!cargandoSorteo">Sorteo</span>
+        </button>
       <div class="xmas-gif-wrapper" *ngIf="!mostrandoResultado || !resultadoActual">
         <div class="xmas-text">
           <!-- <p class="letra-premio">{{ totalPremios }} </p> -->

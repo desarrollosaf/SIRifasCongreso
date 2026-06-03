@@ -1,0 +1,133 @@
+<div class="partido-landing">
+
+  <!-- ============================================ -->
+  <!-- VISTA ADMIN (tipo = 1)                       -->
+  <!-- ============================================ -->
+  <div *ngIf="tipo === 1" class="partido-inner admin-view">
+
+    <header class="partido-header">
+      <div class="header-badges">
+        <span class="badge-mexico">🇲🇽 México</span>
+        <span class="badge-vs">VS</span>
+        <span class="badge-serbia">🇷🇸 Serbia</span>
+      </div>
+      <h1 class="admin-title">Panel de Administración - Sorteo Partido</h1>
+      <p class="participantes-count" *ngIf="totalParticipantes > 0">
+        {{ totalParticipantes }} servidores públicos registrados
+      </p>
+    </header>
+
+    <main class="partido-main admin-main">
+
+      <!-- Controles -->
+      <div class="admin-controls">
+        <button class="btn-sorteo"
+          (click)="sorteo()"
+          [disabled]="cargando || ganadores.length >= MAX_GANADORES">
+          <span *ngIf="!cargando">⚽ Sortear Boleto {{ ganadores.length + 1 }}/{{ MAX_GANADORES }}</span>
+          <span *ngIf="cargando">⏳ Sorteando...</span>
+        </button>
+
+        <button class="btn-reset"
+          (click)="resetSorteo()"
+          [disabled]="ganadores.length === 0 || cargando">
+          🔄 Reiniciar Sorteo
+        </button>
+      </div>
+
+      <!-- Progreso -->
+      <div class="progreso-bar-wrapper" *ngIf="ganadores.length > 0">
+        <div class="progreso-label">{{ ganadores.length }} / {{ MAX_GANADORES }} boletos sorteados</div>
+        <div class="progreso-bar">
+          <div class="progreso-fill" [style.width.%]="(ganadores.length / MAX_GANADORES) * 100"></div>
+        </div>
+      </div>
+
+      <!-- Mensaje sorteo completado -->
+      <div class="sorteo-completo-badge" *ngIf="ganadores.length >= MAX_GANADORES">
+        🎉 Sorteo completado — los {{ MAX_GANADORES }} boletos han sido seleccionados
+      </div>
+
+      <!-- Sin sorteo aún -->
+      <div class="no-resultado" *ngIf="ganadores.length === 0">
+        <p>⚽ Presiona "Sortear Boleto" para ir seleccionando uno a uno</p>
+      </div>
+
+      <!-- Lista de ganadores (admin) -->
+      <div class="ganadores-section" *ngIf="ganadores.length > 0">
+        <h3>🏆 Boletos Ganadores</h3>
+        <div class="tabla-container">
+          <table class="tabla-ganadores">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Folio</th>
+                <th>Nombre Completo</th>
+                <th>Adscripción</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let g of ganadores; let i = index; trackBy: trackById">
+                <td>{{ i + 1 }}</td>
+                <td><strong>{{ g.folio }}</strong></td>
+                <td>{{ g.nombre_completo }}</td>
+                <td>{{ g.adscripcion }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- VISTA PÚBLICA (tipo = 0)                     -->
+  <!-- ============================================ -->
+  <div *ngIf="tipo === 0" class="partido-inner public-view">
+
+    <header class="partido-header public-header">
+      <div class="header-badges">
+        <span class="badge-mexico">🇲🇽 México</span>
+        <span class="badge-vs">VS</span>
+        <span class="badge-serbia">🇷🇸 Serbia</span>
+      </div>
+      <h1 class="public-title">Sorteo de Boletos</h1>
+      <p class="public-subtitle" *ngIf="ganadores.length > 0">
+        {{ ganadores.length }} / {{ MAX_GANADORES }} boletos revelados
+      </p>
+    </header>
+
+    <main class="partido-main public-main">
+
+      <!-- Espera: sin ganadores todavía -->
+      <div class="espera-wrapper" *ngIf="ganadores.length === 0">
+        <div class="pelota-animada">⚽</div>
+        <p class="espera-texto">Esperando el sorteo...</p>
+      </div>
+
+      <!-- Grid de ganadores (se va llenando uno a uno) -->
+      <div class="revelacion-wrapper" *ngIf="ganadores.length > 0">
+        <div class="ganadores-grid">
+          <div class="ganador-card"
+            *ngFor="let g of ganadores; let i = index; trackBy: trackById">
+            <div class="ganador-numero">{{ i + 1 }}</div>
+            <div class="ganador-info">
+              <span class="ganador-folio">Folio: {{ g.folio }}</span>
+              <span class="ganador-nombre">{{ g.nombre_completo }}</span>
+              <span class="ganador-adscripcion">{{ g.adscripcion }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mensaje final cuando ya son 10 -->
+        <div class="sorteo-completo" *ngIf="ganadores.length >= MAX_GANADORES">
+          <p class="completo-texto">¡Sorteo completado! 🎉</p>
+          <p class="completo-sub">{{ MAX_GANADORES }} boletos ganadores seleccionados</p>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+</div>

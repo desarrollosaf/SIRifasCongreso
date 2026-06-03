@@ -22,6 +22,11 @@ export const routes: Routes = [
       import('./views/pages/rifas/rifas.component').then((c) => c.RifasComponent)
   },
   {
+    path: 'partido/:tipo',
+    loadComponent: () =>
+      import('./views/pages/partido/partido.component').then((c) => c.PartidoComponent)
+  },
+  {
     path: '',
     component: BaseComponent,
     canActivateChild: [authGuard],

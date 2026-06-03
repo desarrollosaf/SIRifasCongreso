@@ -20,6 +20,7 @@ const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const path_1 = __importDefault(require("path"));
 const auth_1 = require("../middlewares/auth");
 const rifa_1 = __importDefault(require("../routes/rifa"));
+const partido_1 = __importDefault(require("../routes/partido"));
 class Server {
     constructor() {
         this.app = (0, express_1.default)();
@@ -37,12 +38,13 @@ class Server {
     router() {
         this.app.use(user_1.default);
         this.app.use(rifa_1.default);
+        this.app.use(partido_1.default);
     }
     midlewares() {
         this.app.use(express_1.default.json());
         this.app.use((0, cors_1.default)({
-            //origin: 'http://localhost:4200',
-            origin: 'https://rifas.congresoedomex.gob.mx',
+            origin: 'http://localhost:4200',
+            //origin: 'https://rifas.congresoedomex.gob.mx',
             credentials: true
         }));
         this.app.use((0, cookie_parser_1.default)());
@@ -50,7 +52,8 @@ class Server {
         this.app.use((req, res, next) => {
             const publicPaths = [
                 '/api/user/login',
-                '/api/rifa'
+                '/api/rifa',
+                '/api/partido'
             ];
             const isPublic = publicPaths.some(path => req.originalUrl.startsWith(path));
             if (isPublic) {

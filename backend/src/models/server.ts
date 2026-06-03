@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import path from 'path';
 import { verifyToken } from '../middlewares/auth';
 import rRifa from "../routes/rifa"
+import rPartido from "../routes/partido"
 class Server {
 
     private app: Application
@@ -31,6 +32,7 @@ class Server {
     router(){
         this.app.use(routeUser);
         this.app.use(rRifa);
+        this.app.use(rPartido);
 
     }
 
@@ -38,8 +40,8 @@ class Server {
     midlewares(){
         this.app.use(express.json())
         this.app.use(cors({
-            //origin: 'http://localhost:4200',
-            origin: 'https://rifas.congresoedomex.gob.mx',
+            origin: 'http://localhost:4200',
+            //origin: 'https://rifas.congresoedomex.gob.mx',
             credentials: true
         }));
 
@@ -49,7 +51,8 @@ class Server {
         this.app.use((req: Request, res: Response, next: NextFunction) => {
             const publicPaths = [
                 '/api/user/login',
-                '/api/rifa'
+                '/api/rifa',
+                '/api/partido'
             ];
             const isPublic = publicPaths.some(path => req.originalUrl.startsWith(path));
             if (isPublic) {

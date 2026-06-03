@@ -1,0 +1,460 @@
+:host {
+  display: block;
+}
+
+.partido-landing {
+  min-height: 100vh;
+  background-color: #f4f4f4;
+  box-sizing: border-box;
+}
+
+.partido-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 16px 32px;
+  box-sizing: border-box;
+}
+
+/* ============================================ */
+/* HEADER                                       */
+/* ============================================ */
+.partido-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.header-badges {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.badge-mexico {
+  background: #006847;
+  color: white;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.badge-serbia {
+  background: #c6363c;
+  color: white;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.badge-vs {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #333;
+}
+
+.admin-title {
+  font-size: clamp(1.3rem, 2vw, 1.8rem);
+  font-weight: 700;
+  color: #333;
+  margin: 0;
+}
+
+.public-title {
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  font-weight: 800;
+  color: #006847;
+  margin: 0;
+  text-shadow: 1px 2px 4px rgba(0,0,0,0.1);
+}
+
+.participantes-count,
+.public-subtitle {
+  color: #666;
+  font-size: 1rem;
+  margin: 0;
+  font-weight: 600;
+}
+
+/* ============================================ */
+/* ADMIN VIEW                                   */
+/* ============================================ */
+.admin-view {
+  max-width: 1400px;
+}
+
+.partido-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.admin-controls {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-sorteo,
+.btn-mostrar,
+.btn-limpiar,
+.btn-reset {
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.btn-sorteo {
+  background: linear-gradient(135deg, #006847 0%, #004d35 100%);
+  color: white;
+}
+
+.btn-limpiar {
+  background: linear-gradient(135deg, #FF9800 0%, #E65100 100%);
+  color: white;
+}
+
+.btn-reset {
+  background: linear-gradient(135deg, #f44336 0%, #b71c1c 100%);
+  color: white;
+}
+
+.estado-pantalla {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  background: #ffebee;
+  color: #c62828;
+  border: 2px solid #ef9a9a;
+
+  &.activa {
+    background: #e8f5e9;
+    color: #2e7d32;
+    border-color: #a5d6a7;
+  }
+}
+
+.progreso-bar-wrapper {
+  width: 100%;
+  max-width: 500px;
+}
+
+.progreso-label {
+  text-align: center;
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+.progreso-bar {
+  height: 12px;
+  background: #e0e0e0;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progreso-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #006847, #00a86b);
+  border-radius: 999px;
+  transition: width 0.5s ease;
+}
+
+.sorteo-completo-badge {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 2px solid #a5d6a7;
+  border-radius: 10px;
+  padding: 12px 24px;
+  font-weight: 700;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.no-resultado {
+  text-align: center;
+  padding: 40px 20px;
+  color: #999;
+  font-size: 1rem;
+  background: #f8f8f8;
+  border-radius: 12px;
+  border: 2px dashed #ddd;
+  width: 100%;
+}
+
+.ganadores-section {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+
+  h3 {
+    color: #006847;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin: 0 0 20px 0;
+    text-align: center;
+  }
+}
+
+.tabla-container {
+  overflow-x: auto;
+  border-radius: 8px;
+}
+
+.tabla-ganadores {
+  width: 100%;
+  border-collapse: collapse;
+
+  thead {
+    background: #006847;
+    color: white;
+
+    th {
+      padding: 12px 14px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+  }
+
+  tbody {
+    tr {
+      border-bottom: 1px solid #e0e0e0;
+      transition: background 0.2s ease;
+
+      &:hover {
+        background: #f1f8f4;
+      }
+
+      td {
+        padding: 11px 14px;
+        font-size: 0.9rem;
+
+        &:first-child {
+          font-weight: 700;
+          color: #006847;
+        }
+      }
+    }
+  }
+}
+
+/* ============================================ */
+/* PUBLIC VIEW                                  */
+/* ============================================ */
+.public-view {
+  min-height: 100vh;
+  background: linear-gradient(160deg, #e8f5e9 0%, #f4f4f4 60%);
+}
+
+.public-header {
+  padding-top: 16px;
+}
+
+.public-main {
+  justify-content: center;
+}
+
+/* Pelota animada */
+.pelota-animada {
+  font-size: 6rem;
+  animation: rodar 2s linear infinite;
+  display: inline-block;
+
+  &.small {
+    font-size: 3rem;
+  }
+}
+
+@keyframes rodar {
+  0%   { transform: rotate(0deg) translateY(0); }
+  25%  { transform: rotate(90deg) translateY(-10px); }
+  50%  { transform: rotate(180deg) translateY(0); }
+  75%  { transform: rotate(270deg) translateY(-10px); }
+  100% { transform: rotate(360deg) translateY(0); }
+}
+
+.espera-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 60px 20px;
+}
+
+.espera-texto {
+  font-size: 1.5rem;
+  color: #555;
+  font-weight: 600;
+}
+
+/* Grid de ganadores revelados */
+.revelacion-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.ganadores-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  width: 100%;
+}
+
+.ganador-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: white;
+  border-radius: 14px;
+  padding: 18px 20px;
+  box-shadow: 0 4px 16px rgba(0, 104, 71, 0.15);
+  border-left: 5px solid #006847;
+  animation: aparece 0.6s ease forwards;
+  opacity: 0;
+}
+
+@keyframes aparece {
+  from {
+    opacity: 0;
+    transform: scale(0.85) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.ganador-numero {
+  background: #006847;
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.ganador-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ganador-folio {
+  font-size: 0.8rem;
+  color: #888;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.ganador-nombre {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #222;
+}
+
+.ganador-adscripcion {
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.revelando-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 20px;
+  color: #555;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.sorteo-completo {
+  text-align: center;
+  padding: 24px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.completo-texto {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #006847;
+  margin: 0 0 8px 0;
+}
+
+.completo-sub {
+  font-size: 1rem;
+  color: #666;
+  margin: 0;
+}
+
+/* ============================================ */
+/* RESPONSIVE                                   */
+/* ============================================ */
+@media (max-width: 768px) {
+  .partido-inner {
+    padding: 16px 12px 24px;
+  }
+
+  .admin-controls {
+    flex-direction: column;
+    align-items: stretch;
+
+    button {
+      width: 100%;
+    }
+  }
+
+  .ganadores-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .badge-mexico,
+  .badge-serbia {
+    font-size: 1.1rem;
+    padding: 8px 16px;
+  }
+
+  .badge-vs {
+    font-size: 1.4rem;
+  }
+}
