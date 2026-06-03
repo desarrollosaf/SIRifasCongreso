@@ -121,6 +121,17 @@ export class PartidoComponent implements OnInit, OnDestroy {
     });
   }
 
+  descargarPDF() {
+    this._partido.reportePDF().subscribe((blob: Blob) => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'boletos_ganadores.pdf';
+      a.click();
+      window.URL.revokeObjectURL(url);
+    });
+  }
+
   // Lista invertida para la vista pública (el más reciente aparece primero)
   get ganadoresInvertidos(): Ganador[] {
     return [...this.ganadores].reverse();

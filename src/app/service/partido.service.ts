@@ -33,4 +33,8 @@ export class PartidoService {
   removerGanador(id: number): Observable<any> {
     return this.http.post<any>(`${this.myAppUrl}${this.myAPIUrl}/remover/${id}`, {});
   }
+
+  reportePDF(): Observable<Blob> {
+    return this.http.get(`${this.myAppUrl}${this.myAPIUrl}/reporte`, { responseType: 'blob' });
+  }
 }

@@ -55,7 +55,15 @@
 
       <!-- Lista de ganadores con botón X por fila -->
       <div class="ganadores-section" *ngIf="ganadores.length > 0">
-        <h3>🏆 Boletos Ganadores</h3>
+        <div class="ganadores-header">
+          <h3>🏆 Boletos Ganadores</h3>
+          <button class="btn-pdf" (click)="descargarPDF()" title="Descargar PDF">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM8.5 17.5c-.3 0-.5-.1-.7-.3-.4-.4-.4-1 0-1.4l3.5-3.5-3.5-3.5c-.4-.4-.4-1 0-1.4.4-.4 1-.4 1.4 0l4.2 4.2c.4.4.4 1 0 1.4l-4.2 4.2c-.2.2-.4.3-.7.3z"/>
+            </svg>
+            PDF
+          </button>
+        </div>
         <div class="tabla-container">
           <table class="tabla-ganadores">
             <thead>
