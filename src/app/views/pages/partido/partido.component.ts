@@ -25,7 +25,7 @@ export class PartidoComponent implements OnInit, OnDestroy {
 
   private subscriptions: Subscription[] = [];
 
-  readonly MAX_GANADORES = 10;
+  readonly MAX_GANADORES = 12;
 
   constructor(private aRouter: ActivatedRoute) {}
 

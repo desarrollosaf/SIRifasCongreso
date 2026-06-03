@@ -43,8 +43,8 @@ exports.getParticipantes = getParticipantes;
 const realizarSorteo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const yaGanadores = yield participantePartido_1.default.count({ where: { ganador: true } });
-        if (yaGanadores >= 10) {
-            return res.status(400).json({ message: 'Ya se seleccionaron los 10 boletos ganadores.' });
+        if (yaGanadores >= 12) {
+            return res.status(400).json({ message: 'Ya se seleccionaron los 12 boletos ganadores.' });
         }
         const seleccionado = yield participantePartido_1.default.findOne({
             where: { ganador: false },

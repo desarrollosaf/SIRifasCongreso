@@ -28,8 +28,8 @@ export const getParticipantes = async (req: Request, res: Response): Promise<any
 export const realizarSorteo = async (req: Request, res: Response): Promise<any> => {
   try {
     const yaGanadores = await ParticipantePartido.count({ where: { ganador: true } });
-    if (yaGanadores >= 10) {
-      return res.status(400).json({ message: 'Ya se seleccionaron los 10 boletos ganadores.' });
+    if (yaGanadores >= 12) {
+      return res.status(400).json({ message: 'Ya se seleccionaron los 12 boletos ganadores.' });
     }
 
     const seleccionado = await ParticipantePartido.findOne({
