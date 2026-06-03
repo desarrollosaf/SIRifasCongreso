@@ -121,6 +121,35 @@ export class PartidoComponent implements OnInit, OnDestroy {
     });
   }
 
+  // Lista invertida para la vista pública (el más reciente aparece primero)
+  get ganadoresInvertidos(): Ganador[] {
+    return [...this.ganadores].reverse();
+  }
+
+  quitarGanador(ganador: Ganador) {
+    Swal.fire({
+      title: '¿Quitar este boleto?',
+      html: `<b>${ganador.nombre_completo}</b><br><small>${ganador.adscripcion}</small>`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sí, quitar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (!result.isConfirmed) return;
+
+      this._partido.removerGanador(ganador.id).subscribe({
+        next: () => {
+          this.partidoState.quitarGanador(ganador.id);
+        },
+        error: () => {
+          Swal.fire({ icon: 'error', title: 'Error', text: 'No se pudo quitar el ganador.' });
+        }
+      });
+    });
+  }
+
   trackById(_: number, g: Ganador) {
     return g.id;
   }

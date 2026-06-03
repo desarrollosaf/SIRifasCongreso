@@ -49,6 +49,20 @@ export const realizarSorteo = async (req: Request, res: Response): Promise<any> 
   }
 };
 
+export const removerGanador = async (req: Request, res: Response): Promise<any> => {
+  try {
+    const { id } = req.params;
+    const participante = await ParticipantePartido.findOne({ where: { id, ganador: true } });
+    if (!participante) {
+      return res.status(404).json({ message: 'Ganador no encontrado.' });
+    }
+    await participante.update({ ganador: false });
+    return res.json({ message: 'Ganador removido correctamente' });
+  } catch (error) {
+    return res.status(500).json({ message: 'Error al remover ganador', error });
+  }
+};
+
 export const resetSorteo = async (req: Request, res: Response): Promise<any> => {
   try {
     await ParticipantePartido.update({ ganador: false }, { where: { ganador: true } });

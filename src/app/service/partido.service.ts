@@ -29,4 +29,8 @@ export class PartidoService {
   resetSorteo(): Observable<any> {
     return this.http.post<any>(`${this.myAppUrl}${this.myAPIUrl}/reset`, {});
   }
+
+  removerGanador(id: number): Observable<any> {
+    return this.http.post<any>(`${this.myAppUrl}${this.myAPIUrl}/remover/${id}`, {});
+  }
 }

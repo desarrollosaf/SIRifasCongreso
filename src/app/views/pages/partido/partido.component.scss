@@ -267,6 +267,26 @@
   }
 }
 
+.btn-quitar {
+  background: none;
+  border: 2px solid #e53935;
+  color: #e53935;
+  border-radius: 6px;
+  width: 30px;
+  height: 30px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  line-height: 1;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #e53935;
+    color: white;
+    transform: scale(1.1);
+  }
+}
+
 /* ============================================ */
 /* PUBLIC VIEW                                  */
 /* ============================================ */

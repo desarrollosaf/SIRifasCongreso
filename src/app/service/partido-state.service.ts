@@ -123,6 +123,13 @@ export class PartidoStateService {
     this.saveToStorage();
   }
 
+  quitarGanador(id: number) {
+    const nuevos = this.ganadoresSubject.value.filter(g => g.id !== id);
+    this.ganadoresSubject.next(nuevos);
+    this.broadcast({ type: 'ganadores', data: nuevos });
+    this.saveToStorage();
+  }
+
   limpiar() {
     this.ganadoresSubject.next([]);
     this.broadcast({ type: 'limpiar' });

@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.resetSorteo = exports.realizarSorteo = exports.getParticipantes = exports.getGanadores = void 0;
+exports.resetSorteo = exports.removerGanador = exports.realizarSorteo = exports.getParticipantes = exports.getGanadores = void 0;
 const participantePartido_1 = __importDefault(require("../models/participantePartido"));
 const sequelize_1 = require("sequelize");
 const getGanadores = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -61,6 +61,21 @@ const realizarSorteo = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.realizarSorteo = realizarSorteo;
+const removerGanador = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const participante = yield participantePartido_1.default.findOne({ where: { id, ganador: true } });
+        if (!participante) {
+            return res.status(404).json({ message: 'Ganador no encontrado.' });
+        }
+        yield participante.update({ ganador: false });
+        return res.json({ message: 'Ganador removido correctamente' });
+    }
+    catch (error) {
+        return res.status(500).json({ message: 'Error al remover ganador', error });
+    }
+});
+exports.removerGanador = removerGanador;
 const resetSorteo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield participantePartido_1.default.update({ ganador: false }, { where: { ganador: true } });

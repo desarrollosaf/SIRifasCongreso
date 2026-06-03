@@ -7,4 +7,5 @@ router.get('/api/partido/ganadores', partido_1.getGanadores);
 router.get('/api/partido/participantes', partido_1.getParticipantes);
 router.post('/api/partido/sorteo', partido_1.realizarSorteo);
 router.post('/api/partido/reset', partido_1.resetSorteo);
+router.post('/api/partido/remover/:id', partido_1.removerGanador);
 exports.default = router;
