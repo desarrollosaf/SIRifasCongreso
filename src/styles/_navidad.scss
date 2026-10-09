@@ -1,0 +1,190 @@
+// =====================================================================
+//  Tema navideño del sorteo (pantalla pública y panel de administración)
+//  Lenguaje visual inspirado en ofrendas.congresoedomex.gob.mx:
+//  fondo nocturno, dorado, tipografía Fraunces + DM Sans y animaciones suaves.
+// =====================================================================
+
+:root {
+  --nv-noche: #0b231e;
+  --nv-noche-2: #061411;
+  --nv-pino: #134a3c;
+  --nv-pino-claro: #1f6b56;
+  --nv-rojo: #c8102e;
+  --nv-guinda: #7d0037;
+  --nv-oro: #bb945c;
+  --nv-oro-claro: #e9cf96;
+  --nv-oro-brillo: #ffe7a8;
+  --nv-nieve: #f7f3ea;
+  --nv-crema: #fbf7ef;
+  --nv-tinta: #1d2b27;
+  --nv-tinta-suave: #5b6b66;
+  --nv-linea: #e6dccb;
+  --nv-ok: #1f8a5b;
+  --nv-alerta: #c77d0a;
+  --nv-serif: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --nv-sans: 'DM Sans', 'Helvetica Neue', Arial, sans-serif;
+}
+
+// ---------- Animaciones ----------
+@keyframes nv-sway { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(2deg); } }
+@keyframes nv-twinkle { 0%, 100% { opacity: .35; filter: brightness(.7); } 50% { opacity: 1; filter: brightness(1.25); } }
+@keyframes nv-floatY { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+@keyframes nv-rise { from { opacity: 0; transform: translateY(36px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes nv-pop { 0% { opacity: 0; transform: scale(.6); } 70% { opacity: 1; transform: scale(1.06); } 100% { transform: scale(1); } }
+@keyframes nv-pulse { 0% { box-shadow: 0 0 0 0 rgba(187, 148, 92, .6); } 70% { box-shadow: 0 0 0 18px rgba(187, 148, 92, 0); } 100% { box-shadow: 0 0 0 0 rgba(187, 148, 92, 0); } }
+@keyframes nv-glow { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
+@keyframes nv-flicker { 0%, 100% { transform: scaleY(1); opacity: .9; } 30% { transform: scaleY(1.12); opacity: 1; } 60% { transform: scaleY(.92); opacity: .8; } }
+@keyframes nv-spin { to { transform: rotate(360deg); } }
+@keyframes nv-shimmer { from { background-position: 200% center; } to { background-position: -200% center; } }
+@keyframes nv-shake { 0%, 100% { transform: rotate(0); } 20% { transform: rotate(-6deg); } 40% { transform: rotate(6deg); } 60% { transform: rotate(-4deg); } 80% { transform: rotate(4deg); } }
+@keyframes nv-bokeh { 0%, 100% { transform: translate(0, 0) scale(1); opacity: .5; } 50% { transform: translate(12px, -18px) scale(1.15); opacity: .9; } }
+
+// ---------- Base ----------
+.nv {
+  font-family: var(--nv-sans);
+  color: var(--nv-nieve);
+  -webkit-font-smoothing: antialiased;
+
+  h1, h2, h3, h4, .nv-serif { font-family: var(--nv-serif); letter-spacing: -.01em; }
+}
+
+.nv-fondo-noche {
+  background:
+    radial-gradient(ellipse at 20% 10%, rgba(31, 107, 86, .55), transparent 55%),
+    radial-gradient(ellipse at 85% 85%, rgba(125, 0, 55, .45), transparent 55%),
+    linear-gradient(160deg, var(--nv-noche) 0%, var(--nv-noche-2) 100%);
+}
+
+// Luces desenfocadas tipo bokeh en el fondo
+.nv-bokeh {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(2px);
+  pointer-events: none;
+  animation: nv-bokeh var(--d, 9s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+  background: radial-gradient(circle, var(--c, rgba(255, 214, 140, .55)) 0%, transparent 70%);
+}
+
+.nv-titulo-oro {
+  font-family: var(--nv-serif);
+  background: linear-gradient(100deg, var(--nv-oro) 0%, var(--nv-oro-brillo) 25%, var(--nv-oro) 50%, var(--nv-oro-claro) 75%, var(--nv-oro) 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: nv-shimmer 8s linear infinite;
+}
+
+.nv-pill {
+  display: inline-block;
+  padding: .35rem 1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(233, 207, 150, .55);
+  color: var(--nv-oro-claro);
+  background: rgba(187, 148, 92, .12);
+  font-size: .8rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+
+.nv-rise { animation: nv-rise .9s cubic-bezier(.2, .7, .2, 1) both; animation-delay: var(--delay, 0s); }
+.nv-pop { animation: nv-pop .7s cubic-bezier(.2, .9, .3, 1.2) both; animation-delay: var(--delay, 0s); }
+.nv-flotar { animation: nv-floatY 5s ease-in-out infinite; animation-delay: var(--delay, 0s); }
+
+// ---------- Botones ----------
+.nv-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: .7rem 1.4rem;
+  font-family: var(--nv-sans);
+  font-weight: 700;
+  font-size: .95rem;
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .2s ease, background .2s ease, opacity .2s;
+  text-decoration: none;
+  white-space: nowrap;
+
+  &:hover:not(:disabled) { transform: translateY(-2px); }
+  &:active:not(:disabled) { transform: translateY(0); }
+  &:disabled { opacity: .45; cursor: not-allowed; }
+}
+
+.nv-btn-oro {
+  color: #2b1c05;
+  background: linear-gradient(135deg, var(--nv-oro-brillo), var(--nv-oro));
+  box-shadow: 0 8px 24px rgba(187, 148, 92, .35);
+  &:not(:disabled) { animation: nv-pulse 2.2s infinite; }
+}
+.nv-btn-rojo { color: #fff; background: linear-gradient(135deg, #e0314b, var(--nv-rojo)); box-shadow: 0 8px 20px rgba(200, 16, 46, .3); }
+.nv-btn-verde { color: #fff; background: linear-gradient(135deg, #2aa774, var(--nv-ok)); box-shadow: 0 8px 20px rgba(31, 138, 91, .3); }
+.nv-btn-fantasma { color: var(--nv-oro-claro); border-color: rgba(233, 207, 150, .55); background: transparent; }
+.nv-btn-claro { color: var(--nv-tinta); border-color: var(--nv-linea); background: #fff; }
+.nv-btn-sm { padding: .4rem .85rem; font-size: .82rem; }
+.nv-btn-lg { padding: 1rem 2rem; font-size: 1.15rem; }
+
+// ---------- Esferas colgantes ----------
+.nv-esfera {
+  position: absolute;
+  top: 0;
+  width: 2px;
+  background: linear-gradient(var(--nv-oro-claro), var(--nv-oro));
+  transform-origin: top center;
+  animation: nv-sway var(--d, 5s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+  pointer-events: none;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 50%;
+    width: var(--t, 34px);
+    height: var(--t, 34px);
+    transform: translate(-50%, 100%);
+    border-radius: 50%;
+    background: radial-gradient(circle at 32% 30%, rgba(255, 255, 255, .85) 0 8%, var(--c, var(--nv-rojo)) 30%, color-mix(in srgb, var(--c, var(--nv-rojo)) 55%, #000) 100%);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .35), 0 0 22px color-mix(in srgb, var(--c, var(--nv-rojo)) 45%, transparent);
+  }
+  &::before {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    width: calc(var(--t, 34px) * .32);
+    height: 7px;
+    transform: translateX(-50%);
+    border-radius: 2px;
+    background: linear-gradient(var(--nv-oro-brillo), var(--nv-oro));
+    z-index: 1;
+  }
+}
+
+// ---------- Avatar (foto o iniciales) ----------
+.nv-avatar {
+  position: relative;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, var(--nv-pino-claro), var(--nv-noche));
+  color: var(--nv-oro-claro);
+  font-family: var(--nv-serif);
+  font-weight: 700;
+  border: 3px solid var(--nv-oro);
+
+  img { width: 100%; height: 100%; object-fit: cover; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nv *, .nv *::before, .nv *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+  }
+}

@@ -3,24 +3,43 @@ import { BaseComponent } from './views/layout/base/base.component';
 import { authGuard } from './core/guards/auth.guard';
 import { UserAccessGuard } from './views/pages/auth/user-access.guard';
 import { RedirectComponent } from './views/pages/auth/redirect.component';
+import { adminGuard } from './views/pages/admin/admin.guard';
 export const routes: Routes = [
   { path: 'auth', loadChildren: () => import('./views/pages/auth/auth.routes')},
 
   {
     path: '',
-    redirectTo: 'home/:tipo',
+    redirectTo: 'admin',
     pathMatch: 'full'
   },
+  // Pantalla pública del sorteo (para proyector)
   {
-    path: 'home/:tipo',
+    path: 'pantalla',
     loadComponent: () =>
-      import('./views/pages/home/home.component').then((c) => c.HomeComponent)
+      import('./views/pages/pantalla/pantalla.component').then((c) => c.PantallaComponent)
+  },
+  // Panel de administración del sorteo
+  {
+    path: 'admin/login',
+    loadComponent: () =>
+      import('./views/pages/admin/login/admin-login.component').then((c) => c.AdminLoginComponent)
   },
   {
-    path: 'sorteo',
-    loadComponent: () =>
-      import('./views/pages/rifas/rifas.component').then((c) => c.RifasComponent)
+    path: 'admin',
+    canActivate: [adminGuard],
+    loadComponent: () => import('./views/pages/admin/admin.component').then((c) => c.AdminComponent),
+    children: [
+      { path: '', redirectTo: 'sorteo', pathMatch: 'full' },
+      { path: 'sorteo', loadComponent: () => import('./views/pages/admin/sorteo/admin-sorteo.component').then(c => c.AdminSorteoComponent) },
+      { path: 'premios', loadComponent: () => import('./views/pages/admin/premios/admin-premios.component').then(c => c.AdminPremiosComponent) },
+      { path: 'participantes', loadComponent: () => import('./views/pages/admin/participantes/admin-participantes.component').then(c => c.AdminParticipantesComponent) },
+      { path: 'ganadores', loadComponent: () => import('./views/pages/admin/ganadores/admin-ganadores.component').then(c => c.AdminGanadoresComponent) },
+      { path: 'base-datos', loadComponent: () => import('./views/pages/admin/base-datos/admin-base-datos.component').then(c => c.AdminBaseDatosComponent) },
+    ]
   },
+  // Rutas anteriores
+  { path: 'sorteo', redirectTo: 'pantalla', pathMatch: 'full' },
+  { path: 'home/:tipo', redirectTo: 'admin', pathMatch: 'full' },
   {
     path: '',
     component: BaseComponent,

@@ -1,0 +1,68 @@
+services:
+  # MariaDB (misma familia que SAF): guarda la BD del sorteo y la copia de la base de usuarios adminplem_saf
+  db:
+    image: mariadb:11.4
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-allowed-packet=1G
+    environment:
+      MARIADB_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${RIFAS_DB_NAME}
+      MARIADB_USER: ${RIFAS_DB_USER}
+      MARIADB_PASSWORD: ${RIFAS_DB_PASSWORD}
+      TZ: America/Mexico_City
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  backend:
+    build: ./backend
+    environment:
+      PORT: 3018
+      TZ: America/Mexico_City
+      ENABLE_SAF: "false"
+      CORS_ORIGIN: http://localhost:8080
+      RIFAS_DB_HOST: db
+      RIFAS_DB_NAME: ${RIFAS_DB_NAME}
+      RIFAS_DB_USER: ${RIFAS_DB_USER}
+      RIFAS_DB_PASSWORD: ${RIFAS_DB_PASSWORD}
+      ADMIN_USER: ${ADMIN_USER}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      DURACION_SORTEO_MS: ${DURACION_SORTEO_MS:-3000}
+      FOTOS_DIR: /app/storage/fotos
+      PREMIOS_DIR: /app/storage/premios
+      BACKUPS_DIR: /app/backups
+      BACKUPS_DIR_HOST: ./backups (carpeta del proyecto)
+      # Copia de la base de usuarios SAF dentro de este mismo MariaDB (se actualiza subiendo un .sql desde el admin)
+      SAF_DB_HOST: db
+      SAF_DB_PORT: 3306
+      SAF_DB_NAME: adminplem_saf
+      SAF_DB_USER: root
+      SAF_DB_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      # Carpetas físicas en tu equipo: aquí ves y copias fotos y respaldos
+      - ./data/fotos:/app/storage/fotos
+      - ./data/premios:/app/storage/premios
+      - ./backups:/app/backups
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "3018:3018"
+
+  frontend:
+    build: .
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"
+
+volumes:
+  db_data:

@@ -1,0 +1,251 @@
+:host { display: block; }
+
+.pantalla {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  &.inactivo { cursor: none; .btn-completa { opacity: 0; pointer-events: none; } }
+}
+
+// ---------- Decoración ----------
+.deco {
+  position: absolute;
+  width: min(34vw, 560px);
+  pointer-events: none;
+  user-select: none;
+  z-index: 2;
+  filter: drop-shadow(0 10px 30px rgba(0, 0, 0, .35));
+  &.sup-izq { top: 0; left: 0; }
+  &.sup-der { top: 0; right: 0; transform: scaleX(-1); }
+  &.inf-izq { bottom: 0; left: 0; width: min(30vw, 480px); }
+  &.inf-der { bottom: 0; right: 0; width: min(30vw, 480px); }
+}
+.nv-esfera { z-index: 3; }
+
+// ---------- Encabezado ----------
+.encabezado {
+  position: relative;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .9rem;
+  margin-top: clamp(3.8rem, 8vh, 6rem);
+}
+.logos {
+  background: rgba(255, 255, 255, .96);
+  border-radius: 22px;
+  padding: .7rem 1.6rem;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, .35), 0 0 0 1px rgba(233, 207, 150, .5);
+  img { display: block; height: clamp(46px, 7.5vh, 86px); }
+}
+
+.escenario {
+  position: relative;
+  z-index: 4;
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 4vw 3vh;
+}
+
+// ---------- En espera ----------
+.espera { text-align: center; width: 100%; max-width: 1300px; }
+.titulo {
+  font-size: clamp(2.8rem, 7.2vw, 7rem);
+  font-weight: 800;
+  line-height: 1;
+  margin: 0;
+  text-shadow: 0 0 40px rgba(233, 207, 150, .18);
+}
+.subtitulo { font-size: clamp(1.1rem, 2vw, 1.7rem); color: rgba(247, 243, 234, .8); margin: .9rem 0 2.2rem; }
+
+.espera-fila {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(240px, .8fr);
+  gap: clamp(1.2rem, 3vw, 3rem);
+  align-items: center;
+}
+
+.carrusel {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: 26px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, .45), 0 0 0 6px rgba(187, 148, 92, .55), 0 0 0 7px rgba(255, 231, 168, .6);
+}
+.diapositiva {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  transform: scale(1.06);
+  transition: opacity 1s ease, transform 4s ease;
+  img { width: 100%; height: 100%; object-fit: cover; }
+  &.visible { opacity: 1; transform: scale(1); }
+}
+.carrusel-vacio { display: grid; place-items: center; height: 100%; font-size: 6rem; }
+
+.contador {
+  position: relative;
+  padding: 2.2rem 1.4rem 1.8rem;
+  border-radius: 26px;
+  background: linear-gradient(170deg, rgba(255, 255, 255, .1), rgba(255, 255, 255, .03));
+  border: 1px solid rgba(233, 207, 150, .35);
+  backdrop-filter: blur(6px);
+}
+.contador-num {
+  font-size: clamp(4rem, 9vw, 8.5rem);
+  font-weight: 800;
+  line-height: 1;
+  color: var(--nv-oro-claro);
+  text-shadow: 0 0 30px rgba(233, 207, 150, .45);
+  animation: nv-glow 3s ease-in-out infinite;
+}
+.contador-lbl { text-transform: uppercase; letter-spacing: .2em; font-size: clamp(.8rem, 1.1vw, 1rem); color: rgba(247, 243, 234, .75); margin-top: .4rem; }
+
+// Velas con llama que titila (como en ofrendas)
+.velas { display: flex; justify-content: center; align-items: flex-end; gap: .8rem; height: 70px; margin-bottom: .8rem; }
+.vela {
+  position: relative;
+  width: 16px;
+  height: 42px;
+  border-radius: 4px 4px 2px 2px;
+  background: linear-gradient(90deg, #f5ead2, #fffaf0 45%, #e3d3b3);
+  &.alta { height: 58px; }
+  i {
+    position: absolute;
+    left: 50%;
+    bottom: 100%;
+    width: 12px;
+    height: 22px;
+    margin-left: -6px;
+    border-radius: 50% 50% 35% 35%;
+    background: radial-gradient(ellipse at 50% 70%, #fff7c2 0 25%, #ffc94a 45%, #ff7b1c 75%, transparent 76%);
+    box-shadow: 0 0 22px 6px rgba(255, 190, 80, .45);
+    transform-origin: bottom center;
+    animation: nv-flicker 1.4s ease-in-out infinite;
+  }
+  &:nth-child(2) i { animation-delay: -.5s; }
+  &:nth-child(3) i { animation-delay: -.9s; }
+}
+
+// ---------- Persona (sorteando / revelado) ----------
+.duelo, .revelado-fila {
+  display: grid;
+  grid-template-columns: minmax(0, .9fr) minmax(0, 1.3fr);
+  gap: clamp(1.5rem, 4vw, 4.5rem);
+  align-items: center;
+  width: 100%;
+  max-width: 1400px;
+}
+.persona { text-align: center; }
+.aro {
+  position: relative;
+  display: inline-block;
+  padding: 12px;
+  border-radius: 50%;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    z-index: -1;
+  }
+  &.girando::before {
+    background: conic-gradient(var(--nv-oro-brillo), var(--nv-rojo), var(--nv-oro), var(--nv-pino-claro), var(--nv-oro-brillo));
+    animation: nv-spin 1.6s linear infinite;
+  }
+  &.brillando::before {
+    background: conic-gradient(from 90deg, var(--nv-oro-brillo), var(--nv-oro), var(--nv-oro-claro), var(--nv-oro-brillo));
+    box-shadow: 0 0 60px 18px rgba(255, 215, 130, .45);
+    animation: nv-glow 2.4s ease-in-out infinite;
+  }
+  ::ng-deep .nv-avatar { border-width: 6px; border-color: var(--nv-noche); box-shadow: 0 20px 50px rgba(0, 0, 0, .5); }
+}
+.nombre { font-size: clamp(1.8rem, 3.6vw, 3.4rem); font-weight: 700; margin: 1.2rem 0 .2rem; color: var(--nv-nieve); line-height: 1.1; }
+.area { font-size: clamp(1rem, 1.6vw, 1.4rem); color: var(--nv-oro-claro); margin: 0; }
+
+// ---------- Ruleta de premios ----------
+.ruleta { text-align: center; }
+.ruleta-marco {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: 26px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, .45), 0 0 0 6px rgba(187, 148, 92, .7);
+  img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; filter: blur(1px); }
+  img.visible { opacity: 1; }
+}
+.sorteando { font-family: var(--nv-serif); font-size: clamp(1.4rem, 2.6vw, 2.4rem); color: var(--nv-oro-claro); margin-top: 1.3rem; }
+.regalo { display: inline-block; animation: nv-shake .6s ease-in-out infinite; }
+.puntos i { font-style: normal; animation: nv-glow 1s ease-in-out infinite; }
+.puntos i:nth-child(2) { animation-delay: .2s; }
+.puntos i:nth-child(3) { animation-delay: .4s; }
+
+// ---------- Premio solo (sorteando / esperando ganador) ----------
+.solo {
+  width: 100%;
+  max-width: 1040px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  .ruleta, .premio-ganado { width: 100%; }
+  .premio-marco img { max-height: 50vh; }
+}
+.premio-marco.brillo { animation: nv-pulse 2.4s infinite; }
+.quien { font-family: var(--nv-serif); font-size: clamp(1.3rem, 2.4vw, 2.2rem); color: var(--nv-oro-claro); margin: 1rem 0 0; }
+
+// ---------- Revelado ----------
+.revelado { width: 100%; display: flex; flex-direction: column; align-items: center; }
+.felicidades { font-size: clamp(2.4rem, 5vw, 5.2rem); font-weight: 800; margin: 0 0 clamp(.6rem, 2vh, 1.6rem); text-align: center; }
+.premio-ganado { text-align: center; }
+.premio-marco {
+  border-radius: 28px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, .5), 0 0 0 7px var(--nv-oro), 0 0 0 9px var(--nv-oro-brillo), 0 0 90px 10px rgba(255, 215, 130, .35);
+  img { display: block; width: 100%; max-height: 54vh; aspect-ratio: 16 / 9; object-fit: cover; }
+}
+.premio-nombre { font-size: clamp(1.4rem, 2.5vw, 2.4rem); font-weight: 700; color: var(--nv-nieve); margin: 1rem 0 0; }
+
+// Participante desconocido mientras sale el boleto
+.misterio {
+  font-size: 140px;
+  color: var(--nv-oro-claro);
+  background: radial-gradient(circle at 35% 30%, var(--nv-pino-claro), var(--nv-noche));
+  span { line-height: 1; text-shadow: 0 0 30px rgba(233, 207, 150, .6); animation: nv-glow 1.6s ease-in-out infinite; }
+}
+.premio-ganado .quien { margin-top: .6rem; }
+.precarga { position: absolute; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none; img { width: 1px; height: 1px; } }
+
+// ---------- Utilidades ----------
+.confeti { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 6; }
+.desconectado {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 7;
+  padding: .45rem 1rem;
+  border-radius: 999px;
+  background: rgba(200, 16, 46, .85);
+  color: #fff;
+  font-size: .85rem;
+}
+.btn-completa { position: absolute; right: 1rem; bottom: 1rem; z-index: 7; transition: opacity .4s; }
+
+@media (max-width: 900px) {
+  .espera-fila, .duelo, .revelado-fila { grid-template-columns: 1fr; }
+  .deco { width: 46vw; }
+}

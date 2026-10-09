@@ -1,0 +1,165 @@
+@let estado = vivo.estado();
+@let p = pendiente();
+
+<div class="adm-grid adm-grid-sorteo">
+  <section class="adm-card">
+    <div class="pasos">
+      <span [class.activo]="!p">1 · Sortear premio</span>
+      <span [class.activo]="p && !p.rfc">2 · Elegir ganador</span>
+      <span [class.activo]="p && p.rfc">3 · Entregar</span>
+    </div>
+
+    @if (error()) { <div class="adm-aviso error">{{ error() }}</div> }
+
+    <!-- ============ PASO 1: SORTEAR EL PREMIO ============ -->
+    @if (!p) {
+      <div class="paso-inicio">
+        <div class="regalo-grande nv-flotar">🎁</div>
+        <h2 class="nv-serif">¿Listos para el siguiente premio?</h2>
+        <p class="adm-ayuda">El sistema elige un premio al azar y la pantalla pública gira la ruleta.</p>
+        <button class="nv-btn nv-btn-oro nv-btn-lg" (click)="sortearPremio()" [disabled]="ocupado() || estado.restantes === 0">
+          {{ ocupado() ? 'Sorteando…' : '🎁 Sortear premio' }}
+        </button>
+        @if (estado.restantes === 0) { <p class="adm-ayuda" style="margin-top:.8rem">Ya no quedan premios.</p> }
+      </div>
+    } @else {
+      <!-- Premio sorteado -->
+      <div class="premio-actual nv-pop">
+        <img [src]="recurso(p.premio?.path)" [alt]="p.premio?.premio" />
+        <div>
+          <span class="adm-tag pendiente">Premio sorteado</span>
+          <h3>{{ p.premio?.premio }}</h3>
+          @if (estado.fase === 'sorteando' && estado.ganador?.id === p.id) {
+            <p class="adm-ayuda">La pantalla lo está revelando…</p>
+          }
+        </div>
+      </div>
+
+      <!-- ============ PASO 2: ELEGIR A LA PERSONA DEL BOLETO ============ -->
+      @if (!p.rfc) {
+        <h3 class="subtitulo">Saca el boleto de la tómbola y busca a la persona</h3>
+        <ng-select class="buscador"
+                   [items]="personas()"
+                   [typeahead]="busqueda$"
+                   [searchFn]="sinFiltroLocal"
+                   [loading]="buscando()"
+                   [minTermLength]="2"
+                   [ngModel]="seleccion"
+                   (ngModelChange)="elegir($event)"
+                   bindLabel="nombre"
+                   placeholder="Escribe el nombre (también busca por dependencia o RFC)…"
+                   typeToSearchText="Escribe al menos 2 letras"
+                   notFoundText="Sin resultados"
+                   loadingText="Buscando…">
+          <ng-template ng-option-tmp let-item="item">
+            <div class="opcion">
+              <nv-avatar [tamano]="40" [fotoUrl]="item.fotoUrl" [nombre]="item.nombre" [rfc]="item.rfc" [remota]="false" />
+              <div class="opcion-txt">
+                <b>{{ item.nombre }}</b>
+                <small>{{ item.area || 'Sin dependencia' }}{{ item.direccion ? ' · ' + item.direccion : '' }}</small>
+              </div>
+              @if (item.gano) { <span class="adm-tag cancelado">Ya ganó</span> }
+            </div>
+          </ng-template>
+          <ng-template ng-label-tmp let-item="item">{{ item.nombre }} — {{ item.area }}</ng-template>
+        </ng-select>
+
+        @if (seleccion; as s) {
+          <div class="persona nv-rise">
+            <nv-avatar [tamano]="120" [fotoUrl]="s.fotoUrl" [nombre]="s.nombre" [rfc]="s.rfc" />
+            <div>
+              <h3>{{ s.nombre }}</h3>
+              <div class="dep">{{ s.area || 'Sin dependencia' }}</div>
+              @if (s.direccion) { <div class="dir">{{ s.direccion }}</div> }
+              <div class="rfc">{{ s.rfc }}</div>
+            </div>
+          </div>
+          @if (s.gano) {
+            <div class="adm-aviso error">
+              <b>Esta persona ya ganó un premio.</b>
+              <label class="adm-check" style="margin-top:.5rem"><input type="checkbox" [(ngModel)]="forzar" /> Permitir que gane otra vez</label>
+            </div>
+          }
+          <div class="acciones-resultado">
+            <button class="nv-btn nv-btn-oro nv-btn-lg" (click)="asignar()" [disabled]="ocupado() || (s.gano && !forzar)">
+              🎉 Mostrar ganador en pantalla
+            </button>
+          </div>
+        }
+
+        <div class="acciones-secundarias">
+          <button class="nv-btn nv-btn-claro nv-btn-sm" (click)="cancelarPremio()" [disabled]="ocupado()">↩️ Cancelar premio (regresa al stock)</button>
+        </div>
+      }
+
+      <!-- ============ PASO 3: ENTREGAR ============ -->
+      @if (p.rfc) {
+        <div class="persona ganadora nv-rise">
+          <nv-avatar [tamano]="120" [fotoUrl]="p.fotoUrl" [nombre]="p.nombre" [rfc]="p.rfc" />
+          <div>
+            <span class="adm-tag entregado">¡Ganador!</span>
+            <h3>{{ p.nombre || 'Sin nombre' }}</h3>
+            <div class="dep">{{ p.area }}</div>
+            <div class="rfc">{{ p.rfc }}</div>
+          </div>
+        </div>
+        <div class="acciones-resultado">
+          <button class="nv-btn nv-btn-verde nv-btn-lg" (click)="confirmar()" [disabled]="ocupado()">✅ Confirmar entrega</button>
+          <button class="nv-btn nv-btn-claro" (click)="noSePresento()" [disabled]="ocupado()">🙋 No se presentó · otro boleto</button>
+        </div>
+        <div class="acciones-secundarias">
+          <button class="nv-btn nv-btn-claro nv-btn-sm" (click)="cancelarPremio()" [disabled]="ocupado()">↩️ Cancelar premio (regresa al stock)</button>
+        </div>
+      }
+    }
+  </section>
+
+  <!-- ============ Panel lateral ============ -->
+  <div class="adm-grid" style="align-content:start">
+    <section class="adm-card adm-card-noche nv">
+      <h3>📺 Pantalla pública</h3>
+      <div class="mini-pantalla">
+        @if (estado.ganador?.rfc) {
+          <nv-avatar [tamano]="56" [fotoUrl]="estado.ganador?.fotoUrl" [nombre]="estado.ganador?.nombre ?? null" [rfc]="estado.ganador?.rfc ?? null" />
+        }
+        <div>
+          <div class="fase">
+            @switch (estado.fase) {
+              @case ('espera') { En espera }
+              @case ('sorteando') { Sorteando premio… }
+              @case ('premio') { Esperando al ganador }
+              @case ('revelado') { Mostrando ganador }
+            }
+          </div>
+          <div class="adm-ayuda" style="margin:0">
+            {{ estado.ganador?.nombre || estado.ganador?.premio?.premio || (estado.restantes + ' premios por entregar') }}
+          </div>
+        </div>
+      </div>
+      <div class="adm-fila">
+        <button class="nv-btn nv-btn-fantasma nv-btn-sm" (click)="limpiarPantalla()">🧹 Poner en espera</button>
+        <a class="nv-btn nv-btn-fantasma nv-btn-sm" href="/pantalla" target="sorteo-pantalla">Abrir ↗</a>
+      </div>
+    </section>
+
+    <section class="adm-card">
+      <h3>Últimos sorteos</h3>
+      @if (ultimos().length === 0) {
+        <div class="adm-vacio">Aún no hay sorteos 🎄</div>
+      } @else {
+        <ul class="lista-ultimos">
+          @for (g of ultimos(); track g.id) {
+            <li>
+              <nv-avatar [tamano]="40" [fotoUrl]="g.fotoUrl" [nombre]="g.nombre" [rfc]="g.rfc" />
+              <div class="txt"><b>{{ g.nombre || 'Sin ganador aún' }}</b><span>{{ g.premio?.premio }}</span></div>
+              <span class="adm-tag" [class]="g.estatus">{{ g.estatus }}</span>
+              @if (g.estatus !== 'cancelado') {
+                <button class="nv-btn nv-btn-claro nv-btn-sm" title="Mostrar en pantalla" (click)="mostrar(g)">📺</button>
+              }
+            </li>
+          }
+        </ul>
+      }
+    </section>
+  </div>
+</div>

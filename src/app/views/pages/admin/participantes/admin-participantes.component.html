@@ -1,0 +1,185 @@
+@let s = stats();
+
+<div class="adm-stats">
+  <div class="adm-stat"><div class="num">{{ s.total }}</div><div class="lbl">Participantes</div></div>
+  <div class="adm-stat"><div class="num">{{ s.conFoto }}</div><div class="lbl">Con foto</div></div>
+  <div class="adm-stat"><div class="num">{{ s.total - s.conFoto }}</div><div class="lbl">Sin foto</div></div>
+  <div class="adm-stat"><div class="num">{{ s.fotosSinParticipante }}</div><div class="lbl">Fotos sin participante</div></div>
+</div>
+
+<!-- Base de usuarios SAF dentro de Docker -->
+<section class="adm-card adm-card-noche nv" style="margin-bottom:1.25rem">
+  <div class="adm-card-titulo">
+    <span>🗄️ Base de usuarios SAF</span>
+    <button class="nv-btn nv-btn-fantasma nv-btn-sm" (click)="probarSaf()">Revisar estado</button>
+  </div>
+  <p class="adm-ayuda">
+    La base de usuarios (adminplem_saf) vive dentro de Docker. Para actualizarla, exporta adminplem_saf desde DBeaver o phpMyAdmin
+    (o al menos <b>s_usuario</b>, <b>t_dependencia</b> y <b>t_direccion</b>) y súbela aquí. Se reemplaza completa y se actualiza la lista del sorteo.
+  </p>
+  @if (infoSaf(); as i) {
+    <div class="adm-aviso" [class]="i.ok ? 'ok' : 'alerta'" style="margin-bottom:1rem">{{ i.texto }}</div>
+  }
+
+  <div class="adm-grid adm-grid-2">
+    <div>
+      <b>1. Subir respaldo .sql de SAF</b>
+      <div class="adm-campo" style="margin:.6rem 0">
+        <input class="adm-input" type="file" accept=".sql,.gz,.zip" (change)="elegirSql($event)" [disabled]="importandoSql()" />
+      </div>
+      <div class="adm-fila">
+        <select class="adm-select crece" [(ngModel)]="modoSaf" [disabled]="importandoSql()">
+          <option value="reemplazar">La lista del sorteo queda igual a SAF</option>
+          <option value="agregar">Solo agregar / actualizar personas</option>
+        </select>
+        <button class="nv-btn nv-btn-oro" (click)="subirSql()" [disabled]="!archivoSql || importandoSql()">
+          {{ importandoSql() ? 'Actualizando…' : 'Subir y actualizar' }}
+        </button>
+      </div>
+      @if (importandoSql() || estadoSql()) {
+        <div class="progreso" style="margin-top:.9rem">
+          @if (progresoSubida() < 100) {
+            <div class="barra"><span [style.width.%]="progresoSubida()"></span></div>
+            <small>Subiendo archivo… {{ progresoSubida() }}%</small>
+          } @else {
+            @let e = estadoSql();
+            @if (e?.activo) { <div class="barra"><span class="indeterminada"></span></div> }
+            <small>{{ e?.mensaje }}</small>
+          }
+        </div>
+      }
+    </div>
+    <div>
+      <b>2. Fotos de credencial</b>
+      <p class="adm-ayuda" style="margin:.4rem 0 .6rem">Se bajan de documentacionsaf a <b>data/fotos</b>. Necesita internet: hazlo antes del evento.</p>
+      <div class="adm-fila">
+        @if (descarga()?.activo) {
+          <button class="nv-btn nv-btn-rojo" (click)="detenerFotos()">Detener</button>
+        } @else {
+          <button class="nv-btn nv-btn-oro" (click)="descargarFotos(false)">Descargar fotos faltantes</button>
+          <button class="nv-btn nv-btn-fantasma nv-btn-sm" (click)="descargarFotos(true)" title="Vuelve a bajar también las que ya existen">Actualizar todas</button>
+        }
+      </div>
+      @if (descarga(); as d) {
+        <div class="progreso" style="margin-top:.9rem">
+          <div class="barra"><span [style.width.%]="porcentaje(d)"></span></div>
+          <small>{{ d.mensaje }} · {{ d.procesadas }}/{{ d.total }} · {{ d.descargadas }} descargadas · {{ d.sinFoto }} sin foto en SAF{{ d.errores ? ' · ' + d.errores + ' con error de red' : '' }}</small>
+        </div>
+      }
+    </div>
+  </div>
+  @if (safMensaje(); as m) { <div class="adm-aviso" [class]="m.tipo" style="margin:1rem 0 0">{{ m.texto }}</div> }
+</section>
+
+<div class="adm-grid adm-grid-2" style="margin-bottom:1.25rem">
+  <!-- Importar lista -->
+  <section class="adm-card">
+    <h3>📄 Importar lista (Excel o CSV)</h3>
+    <p class="adm-ayuda">Alternativa a SAF. Primera fila con encabezados: <b>RFC</b>, <b>Nombre</b>, <b>Dependencia</b> (o Área) y <b>Dirección</b>.</p>
+    <div class="adm-campo">
+      <input class="adm-input" type="file" accept=".xlsx,.csv,.txt" (change)="elegirLista($event)" />
+    </div>
+    <div class="adm-fila">
+      <select class="adm-select crece" [(ngModel)]="modo">
+        <option value="agregar">Agregar / actualizar (conserva los actuales)</option>
+        <option value="reemplazar">Reemplazar toda la lista</option>
+      </select>
+      <button class="nv-btn nv-btn-oro" (click)="importar()" [disabled]="!archivoLista || subiendo()">Importar</button>
+    </div>
+    @if (resultadoImport()) { <div class="adm-aviso ok" style="margin:1rem 0 0">{{ resultadoImport() }}</div> }
+  </section>
+
+  <!-- Fotos -->
+  <section class="adm-card">
+    <h3>📸 Fotos ligadas al RFC</h3>
+    <p class="adm-ayuda">Cada archivo debe llamarse con el RFC: <b>GOMA800101AB1.jpg</b> (jpg, png o webp). Puedes subir muchas a la vez o un <b>.zip</b>. Quedan en la carpeta <b>data/fotos</b> del proyecto.</p>
+    <div class="adm-soltar" [class.encima]="encima()"
+         (dragover)="$event.preventDefault(); encima.set(true)" (dragleave)="encima.set(false)" (drop)="soltarFotos($event)">
+      {{ subiendo() ? 'Subiendo…' : 'Arrastra aquí las fotos o el .zip' }}
+      <br />
+      <input type="file" multiple accept=".jpg,.jpeg,.png,.webp,.zip" (change)="elegirFotos($event)" />
+    </div>
+    @if (resultadoFotos(); as r) {
+      <div class="adm-aviso ok" style="margin:1rem 0 0">{{ r.msg }}</div>
+      @if (r.sinParticipante.length) {
+        <div class="adm-aviso alerta" style="margin:.6rem 0 0">Fotos de RFC que no están en la lista: {{ r.sinParticipante.slice(0, 15).join(', ') }}{{ r.sinParticipante.length > 15 ? '…' : '' }}</div>
+      }
+      @if (r.rechazadas.length) {
+        <div class="adm-aviso error" style="margin:.6rem 0 0">No se aceptaron (nombre o formato inválido): {{ r.rechazadas.slice(0, 15).join(', ') }}{{ r.rechazadas.length > 15 ? '…' : '' }}</div>
+      }
+    }
+  </section>
+</div>
+
+<!-- Lista -->
+<section class="adm-card">
+  <div class="adm-card-titulo">
+    <span>👥 Participantes</span>
+    <button class="nv-btn nv-btn-oro nv-btn-sm" (click)="nuevo()">＋ Agregar</button>
+  </div>
+
+  <div class="adm-fila" style="margin-bottom:1rem">
+    <input class="adm-input crece" placeholder="Buscar por RFC, nombre, dependencia o dirección…" [(ngModel)]="q" (ngModelChange)="buscar()" />
+    <select class="adm-select" style="width:auto" [(ngModel)]="foto" (ngModelChange)="buscar()">
+      <option value="">Todos</option>
+      <option value="con">Con foto</option>
+      <option value="sin">Sin foto</option>
+    </select>
+  </div>
+
+  @if (editando() !== null) {
+    <div class="adm-aviso info">
+      <b>{{ editando() ? 'Editar participante' : 'Nuevo participante' }}</b>
+      <div class="adm-fila" style="margin-top:.6rem">
+        <input class="adm-input" style="max-width:190px" placeholder="RFC" [(ngModel)]="form.rfc" />
+        <input class="adm-input crece" placeholder="Nombre" [(ngModel)]="form.nombre" />
+        <input class="adm-input crece" placeholder="Dependencia" [(ngModel)]="form.area" />
+        <input class="adm-input crece" placeholder="Dirección" [(ngModel)]="form.direccion" />
+        <button class="nv-btn nv-btn-verde nv-btn-sm" (click)="guardar()">Guardar</button>
+        <button class="nv-btn nv-btn-claro nv-btn-sm" (click)="editando.set(null)">Cancelar</button>
+      </div>
+    </div>
+  }
+
+  @if (datos().length === 0) {
+    <div class="adm-vacio">{{ s.total === 0 ? 'Aún no hay participantes. Importa tu Excel o CSV arriba.' : 'Sin resultados.' }}</div>
+  } @else {
+    <div class="adm-tabla-wrap">
+      <table class="adm-tabla">
+        <thead><tr><th>Foto</th><th>RFC</th><th>Nombre</th><th>Dependencia</th><th>Dirección</th><th>Ganó</th><th></th></tr></thead>
+        <tbody>
+          @for (p of datos(); track p.id) {
+            <tr>
+              <td>
+                <label style="cursor:pointer" title="Subir o cambiar foto">
+                  <nv-avatar class="adm-mini" [tamano]="42" [fotoUrl]="p.fotoUrl" [nombre]="p.nombre" [rfc]="p.rfc" [remota]="false" />
+                  <input type="file" hidden accept=".jpg,.jpeg,.png,.webp" (change)="subirFotoDe(p, $event)" />
+                </label>
+              </td>
+              <td><b>{{ p.rfc }}</b></td>
+              <td>{{ p.nombre }}</td>
+              <td>{{ p.area }}</td>
+              <td><small>{{ p.direccion }}</small></td>
+              <td><span class="adm-tag" [class]="p.gano ? 'si' : 'no'">{{ p.gano ? 'Sí' : 'No' }}</span></td>
+              <td>
+                <div class="acciones">
+                  @if (p.fotoUrl) { <button class="nv-btn nv-btn-claro nv-btn-sm" title="Quitar foto" (click)="quitarFoto(p)">🖼️✕</button> }
+                  <button class="nv-btn nv-btn-claro nv-btn-sm" (click)="editar(p)">✏️</button>
+                  <button class="nv-btn nv-btn-claro nv-btn-sm" (click)="eliminar(p)">🗑️</button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <div class="adm-paginacion">
+      <span>{{ s.filtrados }} resultado(s)</span>
+      <div class="adm-fila">
+        <button class="nv-btn nv-btn-claro nv-btn-sm" (click)="irA(pagina - 1)" [disabled]="pagina <= 1">‹ Anterior</button>
+        <span>Página {{ pagina }} de {{ paginas }}</span>
+        <button class="nv-btn nv-btn-claro nv-btn-sm" (click)="irA(pagina + 1)" [disabled]="pagina >= paginas">Siguiente ›</button>
+      </div>
+    </div>
+  }
+</section>

@@ -6,6 +6,8 @@ import cookieParser from 'cookie-parser';
 import path from 'path';
 import { verifyToken } from '../middlewares/auth';
 import rRifa from "../routes/rifa"
+import { asegurarEsquema, sembrarPremiosSiVacio } from '../database/setup';
+import { refrescarEstadoBase } from '../controllers/sorteo';
 class Server {
 
     private app: Application
@@ -39,7 +41,7 @@ class Server {
         this.app.use(express.json())
         this.app.use(cors({
             //origin: 'http://localhost:4200',
-            origin: 'https://rifas.congresoedomex.gob.mx',
+            origin: process.env.CORS_ORIGIN || 'https://rifas.congresoedomex.gob.mx',
             credentials: true
         }));
 
@@ -49,7 +51,8 @@ class Server {
         this.app.use((req: Request, res: Response, next: NextFunction) => {
             const publicPaths = [
                 '/api/user/login',
-                '/api/rifa'
+                '/api/admin',   // protegido por verifyAdmin en sus rutas
+                '/api/sorteo'   // pantalla pública
             ];
             const isPublic = publicPaths.some(path => req.originalUrl.startsWith(path));
             if (isPublic) {
@@ -61,13 +64,30 @@ class Server {
     }
 
     async DBconnetc(){
-        try {
-            await UsersSafs.sync();
-            console.log("Conexion de DB exitoso");
+        // La BD de SAF solo es accesible desde la red interna; en Docker local se desactiva con ENABLE_SAF=false
+        if (process.env.ENABLE_SAF !== 'false') {
+            try {
+                await UsersSafs.sync();
+                console.log("Conexion de DB exitoso");
 
-        } catch (error) {
-            console.log("Conexion de DB errorena => "+error);
-            
+            } catch (error) {
+                console.log("Conexion de DB errorena => "+error);
+                
+            }
+        }
+
+        // BD del sorteo: crea tablas/columnas faltantes y carga los premios iniciales
+        for (let intento = 1; intento <= 10; intento++) {
+            try {
+                await asegurarEsquema();
+                await sembrarPremiosSiVacio();
+                await refrescarEstadoBase();
+                console.log("🎄 BD del sorteo lista");
+                return;
+            } catch (error) {
+                console.log(`BD del sorteo no disponible (intento ${intento}) => ${error}`);
+                await new Promise(r => setTimeout(r, 3000));
+            }
         }
     }
 

@@ -13,7 +13,12 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   return next(authReq).pipe(
     catchError(err => {
       if (err.status === 401) {
-        router.navigate(['/auth/login']);
+        // El panel del sorteo tiene su propio inicio de sesión
+        if (req.url.includes('api/admin/')) {
+          if (!req.url.endsWith('api/admin/login')) router.navigate(['/admin/login']);
+        } else {
+          router.navigate(['/auth/login']);
+        }
       }
       return throwError(() => err);
     })

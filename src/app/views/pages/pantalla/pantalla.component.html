@@ -1,0 +1,130 @@
+@let estado = vivo.estado();
+@let ganador = estado.ganador;
+@let evento = estado.evento;
+
+<div class="pantalla nv nv-fondo-noche" [class.inactivo]="inactivo()" [class.fase-revelado]="estado.fase === 'revelado'">
+
+  <!-- Fondo: luces bokeh, nieve, guirnalda, esferas y nochebuenas -->
+  @for (b of bokeh; track $index) {
+    <span class="nv-bokeh" [style.left.%]="b.x" [style.top.%]="b.y" [style.width.px]="b.t" [style.height.px]="b.t"
+          [style.--c]="b.c" [style.--d]="b.d + 's'" [style.--delay]="b.delay + 's'"></span>
+  }
+  <img class="deco sup-izq" src="images/navidad/web/esquina-sup-izq.png" alt="" />
+  <img class="deco sup-der" src="images/navidad/web/esquina-sup-izq.png" alt="" />
+  <img class="deco inf-izq" src="images/navidad/web/esquina-inf-izq.png" alt="" />
+  <img class="deco inf-der" src="images/navidad/web/esquina-inf-der.png" alt="" />
+  @for (e of esferas; track $index) {
+    <span class="nv-esfera" [style.left.%]="e.x" [style.height.px]="e.largo" [style.--t]="e.t + 'px'"
+          [style.--c]="e.c" [style.--d]="e.d + 's'" [style.--delay]="e.delay + 's'"></span>
+  }
+  <nv-nieve />
+  <nv-guirnalda />
+
+  <!-- Encabezado -->
+  <header class="encabezado nv-rise">
+    <div class="logos"><img src="images/navidad/web/logos.png" alt="Congreso del Estado de México" /></div>
+    <span class="nv-pill">{{ evento['evento_titulo'] || 'Gran Sorteo Navideño' }} · {{ evento['evento_anio'] }}</span>
+  </header>
+
+  <main class="escenario">
+    @switch (estado.fase === 'premio' ? 'sorteando' : estado.fase) {
+
+      <!-- ============ EN ESPERA ============ -->
+      @case ('espera') {
+        <section class="espera">
+          <h1 class="titulo nv-rise" style="--delay:.1s">
+            <span class="nv-titulo-oro">{{ evento['evento_titulo'] || 'Gran Sorteo Navideño' }}</span>
+          </h1>
+          <p class="subtitulo nv-rise" style="--delay:.25s">¡Mucha suerte a todas y todos!</p>
+
+          <div class="espera-fila">
+            <div class="carrusel nv-rise" style="--delay:.4s">
+              @for (p of premios(); track p.id; let i = $index) {
+                <figure class="diapositiva" [class.visible]="i === indiceCarrusel()">
+                  <img [src]="recurso(p.path)" [alt]="p.premio" />
+                </figure>
+              }
+              @if (premios().length === 0) {
+                <div class="carrusel-vacio">🎁</div>
+              }
+            </div>
+
+            <div class="contador nv-rise" style="--delay:.55s">
+              <div class="velas">
+                <span class="vela"><i></i></span><span class="vela alta"><i></i></span><span class="vela"><i></i></span>
+              </div>
+              <div class="contador-num nv-serif">{{ estado.restantes }}</div>
+              <div class="contador-lbl">premios por entregar</div>
+            </div>
+          </div>
+        </section>
+      }
+
+      <!-- ============ SORTEANDO / SALIÓ EL PREMIO (el ganador aún es "?") ============ -->
+      @case ('sorteando') {
+        <section class="duelo">
+          <div class="persona nv-pop">
+            <div class="aro girando">
+              <div class="nv-avatar misterio" style="width:300px;height:300px"><span>?</span></div>
+            </div>
+            <h2 class="nombre">¿Quién será?</h2>
+            <p class="area">Sacando boleto de la tómbola<span class="puntos"><i>.</i><i>.</i><i>.</i></span></p>
+          </div>
+
+          @if (estado.fase === 'sorteando') {
+            <div class="ruleta nv-pop" style="--delay:.15s">
+              <div class="ruleta-marco">
+                @for (p of premios(); track p.id; let i = $index) {
+                  <img [src]="recurso(p.path)" [alt]="p.premio" [class.visible]="i === indiceRuleta()" />
+                }
+              </div>
+              <p class="sorteando"><span class="regalo">🎁</span> Sorteando premio<span class="puntos"><i>.</i><i>.</i><i>.</i></span></p>
+            </div>
+          } @else {
+            <div class="premio-ganado nv-pop">
+              <div class="premio-marco brillo">
+                <img [src]="recurso(ganador?.premio?.path)" [alt]="ganador?.premio?.premio" />
+              </div>
+              <p class="premio-nombre nv-serif">{{ ganador?.premio?.premio }}</p>
+              <p class="quien"><span class="regalo">🎟️</span> ¿Quién se lo lleva?</p>
+            </div>
+          }
+        </section>
+      }
+
+      <!-- ============ GANADOR ============ -->
+      @case ('revelado') {
+        <section class="revelado">
+          <h1 class="felicidades nv-pop"><span class="nv-titulo-oro">¡Felicidades{{ saludo(ganador) ? ', ' + saludo(ganador) : '' }}!</span></h1>
+          <div class="revelado-fila">
+            <div class="persona nv-rise" style="--delay:.2s">
+              <div class="aro brillando">
+                <nv-avatar [tamano]="320" [fotoUrl]="ganador?.fotoUrl" [nombre]="ganador?.nombre ?? null" [rfc]="ganador?.rfc ?? null" />
+              </div>
+              <h2 class="nombre">{{ ganador?.nombre || 'Participante' }}</h2>
+              @if (ganador?.area) { <p class="area">{{ ganador?.area }}</p> }
+            </div>
+
+            <div class="premio-ganado nv-pop" style="--delay:.45s">
+              <div class="premio-marco">
+                <img [src]="recurso(ganador?.premio?.path)" [alt]="ganador?.premio?.premio" />
+              </div>
+              <p class="premio-nombre nv-serif">{{ ganador?.premio?.premio }}</p>
+            </div>
+          </div>
+        </section>
+      }
+    }
+  </main>
+
+  <div class="precarga" aria-hidden="true">
+    @for (p of premios(); track p.id) { <img [src]="recurso(p.path)" alt="" /> }
+  </div>
+
+  <canvas #confeti class="confeti"></canvas>
+
+  @if (!vivo.conectado()) {
+    <div class="desconectado">Reconectando con el sorteo…</div>
+  }
+  <button class="btn-completa nv-btn nv-btn-fantasma nv-btn-sm" (click)="pantallaCompleta()" title="Tecla F">⛶ Pantalla completa</button>
+</div>
