@@ -41,6 +41,11 @@ export const routes: Routes = [
   { path: 'sorteo', redirectTo: 'pantalla', pathMatch: 'full' },
   { path: 'home/:tipo', redirectTo: 'admin', pathMatch: 'full' },
   {
+    path: 'partido/:tipo',
+    loadComponent: () =>
+      import('./views/pages/partido/partido.component').then((c) => c.PartidoComponent)
+  },
+  {
     path: '',
     component: BaseComponent,
     canActivateChild: [authGuard],

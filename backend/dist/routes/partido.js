@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const partido_1 = require("../controllers/partido");
+const router = (0, express_1.Router)();
+router.get('/api/partido/ganadores', partido_1.getGanadores);
+router.get('/api/partido/participantes', partido_1.getParticipantes);
+router.post('/api/partido/sorteo', partido_1.realizarSorteo);
+router.post('/api/partido/reset', partido_1.resetSorteo);
+router.post('/api/partido/remover/:id', partido_1.removerGanador);
+router.get('/api/partido/reporte', partido_1.reportePDF);
+exports.default = router;
