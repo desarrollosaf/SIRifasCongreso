@@ -28,6 +28,7 @@ admin.use(verifyAdmin);
 
 admin.get("/me", adminActual)
 
+admin.get("/sorteo/boleto/:boleto", sorteo.buscarBoleto)
 admin.get("/sorteo/personas", sorteo.buscarPersonas)
 admin.get("/sorteo/participante/:rfc", sorteo.buscarParticipante)
 admin.get("/sorteo/pendiente", sorteo.pendienteActual)

@@ -8,6 +8,7 @@ export interface PremioRef { id: number; premio: string | null; path: string | n
 export interface Ganador {
   id: number;
   rfc: string | null;
+  boleto?: number | null;
   nombre: string | null;
   nombrePila?: string | null;
   area: string | null;
@@ -29,6 +30,7 @@ export interface Premio extends PremioRef {
 export interface Participante {
   id: number;
   rfc: string;
+  boleto: number | null;
   nombre: string | null;
   area: string | null;
   direccion?: string | null;
@@ -45,9 +47,10 @@ export interface BusquedaParticipante {
   ganados: { id: number; estatus: string; premio: string; fecha: string }[];
 }
 
-// Resultado del buscador por nombre (select del sorteo)
+// Dueño de un boleto (o resultado del buscador por nombre)
 export interface Persona {
   rfc: string;
+  boleto: number | null;
   nombre: string | null;
   area: string | null;
   direccion: string | null;
@@ -85,8 +88,9 @@ export class AdminApiService {
   buscarParticipante(rfc: string) { return this.http.get<BusquedaParticipante>(`${this.base}/sorteo/participante/${encodeURIComponent(rfc)}`); }
   pendiente() { return this.http.get<Ganador | null>(`${this.base}/sorteo/pendiente`); }
   sortear() { return this.http.post<Ganador>(`${this.base}/sorteo/sortear`, {}); }
+  buscarBoleto(boleto: number) { return this.http.get<Persona>(`${this.base}/sorteo/boleto/${boleto}`); }
   buscarPersonas(q: string) { return this.http.get<Persona[]>(`${this.base}/sorteo/personas`, { params: { q } }); }
-  asignarGanador(id: number, datos: { rfc: string; nombre?: string; area?: string; forzar?: boolean }) {
+  asignarGanador(id: number, datos: { rfc: string; boleto?: number; nombre?: string; area?: string; forzar?: boolean }) {
     return this.http.post<Ganador>(`${this.base}/sorteo/${id}/ganador`, datos);
   }
   quitarGanador(id: number) { return this.http.delete<Ganador>(`${this.base}/sorteo/${id}/ganador`); }
@@ -122,7 +126,7 @@ export class AdminApiService {
     const form = new FormData();
     form.append('archivo', archivo);
     form.append('modo', modo);
-    return this.http.post<{ msg: string; importados: number; sinRfc: number; duplicadosEnArchivo: number; total: number }>(
+    return this.http.post<{ msg: string; importados: number; conBoleto: number; vinculados: number; sinVincular: number; avisoSaf: string; sinRfc: number; duplicadosEnArchivo: number; total: number }>(
       `${this.base}/participantes/importar`, form);
   }
   subirFotos(archivos: File[]) {
@@ -184,5 +188,8 @@ export const descargarBlob = (blob: Blob, nombre: string) => {
   a.click();
   URL.revokeObjectURL(url);
 };
+
+// Quien no tiene RFC trae una clave interna hecha con su boleto: no se muestra
+export const rfcVisible = (rfc: string | null | undefined) => (!rfc || /^BOLETO\d+$/.test(rfc) ? '' : rfc);
 
 export const mensajeError = (e: any, porDefecto = 'Ocurrió un error') => e?.error?.msg || e?.message || porDefecto;

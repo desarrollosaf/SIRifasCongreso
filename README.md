@@ -30,7 +30,7 @@ La pantalla pública se actualiza en vivo desde el servidor, así que puede abri
 ## Cómo funciona el sorteo
 
 1. **Sortear premio** (Admin → Sorteo): el sistema elige un premio al azar (cada unidad tiene la misma probabilidad), lo aparta como *pendiente* y la pantalla pública gira la ruleta hasta mostrarlo con "¿Quién se lo lleva?".
-2. Se saca el **boleto de la tómbola** y en el select se **busca a la persona por nombre**. Cada opción muestra su dependencia y dirección para distinguir homónimos; también se puede buscar por dependencia o RFC.
+2. Se saca el **boleto de la tómbola**, se **escribe su número** y se presiona Enter: aparece la persona dueña del boleto. Si el boleto no se lee, se puede buscar por nombre. Solo participa quien tiene boleto.
 3. **Mostrar ganador en pantalla**: aparece su foto de credencial con confeti.
 4. Después eliges una opción:
    - ✅ **Confirmar entrega**: queda como *entregado*.
@@ -51,7 +51,9 @@ En **Admin → Participantes → Base de usuarios SAF**:
    - El día del evento puedes subir un .sql nuevo para actualizar todo. El historial de ganadores no se toca.
 2. **Descargar fotos faltantes**: baja las fotos de credencial de `documentacionsaf.gob.mx/credenciales/storage/credenciales/{RFC}.jpg` a `data/fotos/`. Necesita internet, así que hazlo antes del evento. Si alguna foto falta y hay internet, la pantalla la intenta cargar en línea.
 
-Como alternativa también se puede importar un Excel o CSV con las columnas RFC, Nombre, Dependencia y Dirección.
+### Lista de boletos
+
+En **Admin → Participantes → Importar lista** se carga el Excel o CSV con las columnas **Boleto** (o No.), **Nombre**, **Dependencia** y **Adscripción**. Si no trae RFC, se busca en SAF por nombre exacto (para ligar la foto); quien no aparezca participa sin foto. Con boletos cargados, actualizar SAF no reemplaza la lista: solo completa los RFC que falten.
 
 La pantalla pública se recarga sola cuando se publica una versión nueva del sistema (solo mientras está en espera). El admin muestra un aviso para recargar.
 

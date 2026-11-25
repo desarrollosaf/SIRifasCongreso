@@ -5,7 +5,7 @@
   <section class="adm-card">
     <div class="pasos">
       <span [class.activo]="!p">1 · Sortear premio</span>
-      <span [class.activo]="p && !p.rfc">2 · Elegir ganador</span>
+      <span [class.activo]="p && !p.rfc">2 · Capturar boleto</span>
       <span [class.activo]="p && p.rfc">3 · Entregar</span>
     </div>
 
@@ -35,9 +35,19 @@
         </div>
       </div>
 
-      <!-- ============ PASO 2: ELEGIR A LA PERSONA DEL BOLETO ============ -->
+      <!-- ============ PASO 2: CAPTURAR EL BOLETO ============ -->
       @if (!p.rfc) {
-        <h3 class="subtitulo">Saca el boleto de la tómbola y busca a la persona</h3>
+        <h3 class="subtitulo">{{ porNombre() ? 'Busca a la persona por nombre' : 'Saca el boleto de la tómbola y escribe su número' }}</h3>
+        @if (!porNombre()) {
+        <form class="captura-boleto" (ngSubmit)="buscarBoleto()">
+          <input #campoBoleto class="campo-boleto" type="text" inputmode="numeric" autocomplete="off" name="boleto"
+                 aria-label="Número de boleto" placeholder="Núm. de boleto"
+                 [ngModel]="numeroBoleto" (ngModelChange)="cambiarBoleto($event)" />
+          <button type="submit" class="nv-btn nv-btn-verde nv-btn-lg" [disabled]="!numeroBoleto || buscando()">
+            {{ buscando() ? 'Buscando…' : '🔎 Buscar' }}
+          </button>
+        </form>
+        } @else {
         <ng-select class="buscador"
                    [items]="personas()"
                    [typeahead]="busqueda$"
@@ -55,7 +65,7 @@
             <div class="opcion">
               <nv-avatar [tamano]="40" [fotoUrl]="item.fotoUrl" [nombre]="item.nombre" [rfc]="item.rfc" [remota]="false" />
               <div class="opcion-txt">
-                <b>{{ item.nombre }}</b>
+                <b>{{ item.boleto }} · {{ item.nombre }}</b>
                 <small>{{ item.area || 'Sin dependencia' }}{{ item.direccion ? ' · ' + item.direccion : '' }}</small>
               </div>
               @if (item.gano) { <span class="adm-tag cancelado">Ya ganó</span> }
@@ -63,15 +73,17 @@
           </ng-template>
           <ng-template ng-label-tmp let-item="item">{{ item.nombre }} — {{ item.area }}</ng-template>
         </ng-select>
+        }
 
         @if (seleccion; as s) {
           <div class="persona nv-rise">
             <nv-avatar [tamano]="120" [fotoUrl]="s.fotoUrl" [nombre]="s.nombre" [rfc]="s.rfc" />
             <div>
+              <span class="adm-tag pendiente">🎟️ Boleto {{ s.boleto }}</span>
               <h3>{{ s.nombre }}</h3>
               <div class="dep">{{ s.area || 'Sin dependencia' }}</div>
               @if (s.direccion) { <div class="dir">{{ s.direccion }}</div> }
-              <div class="rfc">{{ s.rfc }}</div>
+              <div class="rfc">{{ rfcVisible(s.rfc) }}</div>
             </div>
           </div>
           @if (s.gano) {
@@ -88,6 +100,9 @@
         }
 
         <div class="acciones-secundarias">
+          <button class="nv-btn nv-btn-claro nv-btn-sm" (click)="alternarBusqueda()" [disabled]="ocupado()">
+            {{ porNombre() ? '🎟️ Buscar por boleto' : '🔤 ¿No se lee? Buscar por nombre' }}
+          </button>
           <button class="nv-btn nv-btn-claro nv-btn-sm" (click)="cancelarPremio()" [disabled]="ocupado()">↩️ Cancelar premio (regresa al stock)</button>
         </div>
       }
@@ -97,10 +112,10 @@
         <div class="persona ganadora nv-rise">
           <nv-avatar [tamano]="120" [fotoUrl]="p.fotoUrl" [nombre]="p.nombre" [rfc]="p.rfc" />
           <div>
-            <span class="adm-tag entregado">¡Ganador!</span>
+            <span class="adm-tag entregado">¡Ganador!{{ p.boleto ? ' · Boleto ' + p.boleto : '' }}</span>
             <h3>{{ p.nombre || 'Sin nombre' }}</h3>
             <div class="dep">{{ p.area }}</div>
-            <div class="rfc">{{ p.rfc }}</div>
+            <div class="rfc">{{ rfcVisible(p.rfc) }}</div>
           </div>
         </div>
         <div class="acciones-resultado">

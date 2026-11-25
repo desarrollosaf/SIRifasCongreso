@@ -2,7 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { Subject, debounceTime } from 'rxjs';
-import { AdminApiService, Ganador, descargarBlob, mensajeError } from '../../../../service/admin-api.service';
+import { AdminApiService, Ganador, descargarBlob, mensajeError, rfcVisible } from '../../../../service/admin-api.service';
 import { AvatarComponent } from '../../../shared/navidad/avatar.component';
 import { swalNavidad, toast } from '../sorteo/admin-sorteo.component';
 
@@ -29,7 +29,7 @@ import { swalNavidad, toast } from '../sorteo/admin-sorteo.component';
           <option value="cancelado">Cancelados</option>
           <option value="todos">Todos</option>
         </select>
-        <input class="adm-input crece" placeholder="Buscar por RFC o nombre…" [(ngModel)]="q" (ngModelChange)="buscar$.next()" />
+        <input class="adm-input crece" placeholder="Buscar por boleto, RFC o nombre…" [(ngModel)]="q" (ngModelChange)="buscar$.next()" />
       </div>
 
       @if (lista().length === 0) {
@@ -45,7 +45,7 @@ import { swalNavidad, toast } from '../sorteo/admin-sorteo.component';
                   <td>
                     <div class="adm-fila" style="flex-wrap:nowrap">
                       <nv-avatar [tamano]="40" [fotoUrl]="g.fotoUrl" [nombre]="g.nombre" [rfc]="g.rfc" />
-                      <div><b>{{ g.nombre || 'Sin nombre' }}</b><br /><small>{{ g.rfc }} · {{ g.area }}</small></div>
+                      <div><b>{{ g.nombre || 'Sin nombre' }}</b><br /><small>{{ detalle(g) }}</small></div>
                     </div>
                   </td>
                   <td>{{ g.premio?.premio }}</td>
@@ -81,6 +81,8 @@ export class AdminGanadoresComponent implements OnInit {
     this.buscar$.pipe(debounceTime(300)).subscribe(() => this.cargar());
     this.cargar();
   }
+
+  detalle(g: Ganador) { return [g.boleto ? `Boleto ${g.boleto}` : '', rfcVisible(g.rfc), g.area].filter(Boolean).join(' · '); }
 
   cargar() { this.api.ganadores(this.estatus, this.q).subscribe(l => this.lista.set(l)); }
 

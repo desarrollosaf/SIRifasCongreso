@@ -1,9 +1,9 @@
-import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { Subject, Subscription, catchError, debounceTime, distinctUntilChanged, of, switchMap, tap } from 'rxjs';
 import Swal from 'sweetalert2';
-import { AdminApiService, Ganador, Persona, mensajeError } from '../../../../service/admin-api.service';
+import { AdminApiService, Ganador, Persona, mensajeError, rfcVisible } from '../../../../service/admin-api.service';
 import { SorteoEnVivoService } from '../../../../service/sorteo-en-vivo.service';
 import { AvatarComponent } from '../../../shared/navidad/avatar.component';
 
@@ -16,7 +16,7 @@ export const swalNavidad = Swal.mixin({
 export const toast = (icon: 'success' | 'error' | 'info' | 'warning', title: string) =>
   Swal.fire({ toast: true, position: 'top-end', icon, title, timer: 3200, showConfirmButton: false, timerProgressBar: true });
 
-// Flujo: 1) Sortear premio  2) sale el boleto y se busca a la persona por nombre  3) confirmar entrega
+// Flujo: 1) Sortear premio  2) sale el boleto y se captura su número  3) confirmar entrega
 @Component({
   selector: 'app-admin-sorteo',
   standalone: true,
@@ -34,7 +34,19 @@ export class AdminSorteoComponent implements OnInit, OnDestroy {
   ocupado = signal(false);
   error = signal('');
 
-  // Buscador de personas
+  // Captura del número de boleto
+  readonly rfcVisible = rfcVisible;
+  numeroBoleto = '';
+  porNombre = signal(false);
+  private campo?: ElementRef<HTMLInputElement>;
+  @ViewChild('campoBoleto') set campoBoleto(c: ElementRef<HTMLInputElement> | undefined) {
+    // Al aparecer el campo queda listo para teclear
+    if (c && c !== this.campo) setTimeout(() => c.nativeElement.focus());
+    this.campo = c;
+  }
+  private peticionBoleto?: Subscription;
+
+  // Buscador de personas por nombre (si el boleto no se lee)
   personas = signal<Persona[]>([]);
   buscando = signal(false);
   busqueda$ = new Subject<string>();
@@ -53,7 +65,34 @@ export class AdminSorteoComponent implements OnInit, OnDestroy {
     ).subscribe(lista => { this.personas.set(lista); this.buscando.set(false); });
   }
 
-  ngOnDestroy() { this.sub?.unsubscribe(); }
+  ngOnDestroy() { this.sub?.unsubscribe(); this.peticionBoleto?.unsubscribe(); }
+
+  // Al corregir el número se quita a la persona anterior, para no premiar al boleto equivocado
+  cambiarBoleto(valor: string) {
+    this.numeroBoleto = (valor || '').replace(/\D/g, '').slice(0, 9);
+    if (this.campo) this.campo.nativeElement.value = this.numeroBoleto;
+    this.peticionBoleto?.unsubscribe();
+    this.buscando.set(false);
+    this.elegir(null);
+  }
+
+  buscarBoleto() {
+    const numero = Number(this.numeroBoleto);
+    if (!numero) return;
+    this.peticionBoleto?.unsubscribe();
+    this.elegir(null);
+    this.buscando.set(true);
+    this.peticionBoleto = this.api.buscarBoleto(numero).subscribe({
+      next: p => { this.buscando.set(false); this.elegir(p); },
+      error: e => { this.buscando.set(false); this.error.set(mensajeError(e)); this.campo?.nativeElement.select(); },
+    });
+  }
+
+  alternarBusqueda() {
+    this.porNombre.set(!this.porNombre());
+    this.limpiarBusqueda();
+    this.error.set('');
+  }
 
   private cargarUltimos() {
     this.api.ganadores('todos').subscribe(g => this.ultimos.set(g.slice(0, 8)));
@@ -89,7 +128,7 @@ export class AdminSorteoComponent implements OnInit, OnDestroy {
     if (!p || !s) return;
     this.ocupado.set(true);
     this.error.set('');
-    this.api.asignarGanador(p.id, { rfc: s.rfc, nombre: s.nombre ?? undefined, area: s.area ?? undefined, forzar: this.forzar }).subscribe({
+    this.api.asignarGanador(p.id, { rfc: s.rfc, boleto: s.boleto ?? undefined, nombre: s.nombre ?? undefined, area: s.area ?? undefined, forzar: this.forzar }).subscribe({
       next: g => { this.pendiente.set(g); this.ocupado.set(false); this.limpiarBusqueda(); this.cargarUltimos(); },
       error: e => {
         this.ocupado.set(false);
@@ -154,6 +193,9 @@ export class AdminSorteoComponent implements OnInit, OnDestroy {
   mostrar(g: Ganador) { this.api.mostrar(g.id).subscribe(); }
 
   private limpiarBusqueda() {
+    this.peticionBoleto?.unsubscribe();
+    this.buscando.set(false);
+    this.numeroBoleto = '';
     this.seleccion = null;
     this.forzar = false;
     this.personas.set([]);
@@ -161,6 +203,7 @@ export class AdminSorteoComponent implements OnInit, OnDestroy {
 
   private terminar() {
     this.pendiente.set(null);
+    this.porNombre.set(false);
     this.limpiarBusqueda();
     this.error.set('');
     this.ocupado.set(false);

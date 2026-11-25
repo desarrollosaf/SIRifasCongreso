@@ -8,12 +8,13 @@ import { getConfig } from '../models/config';
 import { premiosRestantes } from '../database/setup';
 import { indiceFotos, normalizarRfc, urlFoto } from '../services/fotos';
 import { crearRespaldo } from '../services/backups';
+import { leerBoleto } from '../services/boletos';
 import { nombrePila } from '../services/nombres';
 import {
     GanadorPantalla, actualizarEstado, iniciarSorteoEnPantalla, limpiarPantalla, obtenerEstado, suscribir,
 } from '../services/sorteoEstado';
 
-// Flujo: 1) se sortea el premio  2) sale el boleto de la tómbola y se elige a la persona
+// Flujo: 1) se sortea el premio  2) sale el boleto de la tómbola y se captura su número
 //        3) se confirma la entrega (o "no se presentó" y se saca otro boleto para el mismo premio)
 
 class ErrorSorteo extends Error {
@@ -37,6 +38,7 @@ const responderError = (res: Response, e: any) => {
 export const aPantalla = (r: Rifa): GanadorPantalla => ({
     id: r.id,
     rfc: r.rfc,
+    boleto: r.boleto ?? null,
     nombre: r.nombre,
     // Registros viejos sin nombre_pila: se calcula del nombre completo (orden SAF)
     nombrePila: r.nombre_pila || nombrePila(r.nombre),
@@ -74,7 +76,21 @@ export const premiosPantalla = async (req: Request, res: Response): Promise<any>
     return res.json(premios);
 };
 
-// --- Admin: buscador de personas (select por nombre) ---
+// --- Admin: persona dueña de un boleto ---
+
+export const buscarBoleto = async (req: Request, res: Response): Promise<any> => {
+    const boleto = leerBoleto(req.params.boleto);
+    if (!boleto) return res.status(400).json({ msg: 'Escribe un número de boleto válido' });
+    const p = await Participante.findOne({ where: { boleto } });
+    if (!p) return res.status(404).json({ msg: `El boleto ${boleto} no está en la lista` });
+    return res.json({
+        rfc: p.rfc, boleto: p.boleto, nombre: p.nombre, area: p.area, direccion: p.direccion,
+        fotoUrl: urlFoto(p.rfc),
+        gano: (await premiosGanados(p.rfc)).length > 0,
+    });
+};
+
+// --- Admin: buscador de personas por nombre (respaldo si el boleto no se lee) ---
 
 export const buscarPersonas = async (req: Request, res: Response): Promise<any> => {
     const q = String(req.query.q || '').trim();
@@ -83,6 +99,7 @@ export const buscarPersonas = async (req: Request, res: Response): Promise<any> 
     const palabras = q.split(/\s+/).slice(0, 5);
     const personas = await Participante.findAll({
         where: {
+            boleto: { [Op.ne]: null },
             [Op.and]: palabras.map(p => ({
                 [Op.or]: [
                     { nombre: { [Op.like]: `%${p}%` } },
@@ -102,6 +119,7 @@ export const buscarPersonas = async (req: Request, res: Response): Promise<any> 
     })).map(r => r.rfc));
     return res.json(personas.map(p => ({
         rfc: p.rfc,
+        boleto: p.boleto,
         nombre: p.nombre,
         area: p.area,
         direccion: p.direccion,
@@ -181,6 +199,12 @@ export const asignarGanador = async (req: Request, res: Response): Promise<any> 
 
             const rfc = normalizarRfc(req.body?.rfc);
             if (!rfc) throw new ErrorSorteo(400, 'Selecciona a la persona ganadora');
+            const participante = await Participante.findOne({ where: { rfc } });
+            if (!participante?.boleto) throw new ErrorSorteo(400, 'Esa persona no tiene boleto registrado');
+            const boleto = leerBoleto(req.body?.boleto);
+            if (boleto !== null && boleto !== participante.boleto) {
+                throw new ErrorSorteo(409, 'El boleto ya no corresponde a esa persona: búscalo de nuevo');
+            }
             const previos = await premiosGanados(rfc, registro.id);
             if (previos.length > 0 && !req.body?.forzar) {
                 throw new ErrorSorteo(409, 'Esta persona ya ganó un premio', {
@@ -188,10 +212,10 @@ export const asignarGanador = async (req: Request, res: Response): Promise<any> 
                     ganados: previos.map(g => ({ id: g.id, premio: g.m_regalo?.premio, estatus: g.estatus })),
                 });
             }
-            const participante = await Participante.findOne({ where: { rfc } });
             const nombreElegido = String(req.body?.nombre || '').trim() || participante?.nombre || null;
             await registro.update({
                 rfc,
+                boleto: participante.boleto,
                 nombre: nombreElegido,
                 nombre_pila: participante?.nombre && participante.nombre === nombreElegido
                     ? (participante.nombre_pila || nombrePila(nombreElegido))
@@ -215,7 +239,7 @@ export const quitarGanador = async (req: Request, res: Response): Promise<any> =
             const registro = await Rifa.findByPk(Number(req.params.id), conPremio);
             if (!registro) throw new ErrorSorteo(404, 'No existe ese registro');
             if (registro.estatus !== 'pendiente') throw new ErrorSorteo(400, `El premio ya está ${registro.estatus}`);
-            await registro.update({ rfc: null, nombre: null, nombre_pila: null, area: null });
+            await registro.update({ rfc: null, boleto: null, nombre: null, nombre_pila: null, area: null });
             const pantalla = aPantalla(registro);
             actualizarEstado({ fase: 'premio', ganador: pantalla });
             return pantalla;

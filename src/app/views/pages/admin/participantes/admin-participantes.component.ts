@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Subject, debounceTime } from 'rxjs';
 import { HttpEventType } from '@angular/common/http';
-import { AdminApiService, EstadoDescarga, EstadoImportSql, Participante, mensajeError } from '../../../../service/admin-api.service';
+import { AdminApiService, EstadoDescarga, EstadoImportSql, Participante, mensajeError, rfcVisible } from '../../../../service/admin-api.service';
 import { AvatarComponent } from '../../../shared/navidad/avatar.component';
 import { swalNavidad, toast } from '../sorteo/admin-sorteo.component';
 
@@ -31,7 +31,8 @@ export class AdminParticipantesComponent implements OnInit, OnDestroy {
   encima = signal(false);
 
   editando = signal<number | null>(null);
-  form = { rfc: '', nombre: '', area: '', direccion: '' };
+  readonly rfcVisible = rfcVisible;
+  form = { boleto: '', rfc: '', nombre: '', area: '', direccion: '' };
 
   // Sincronización con SAF
   modoSaf: 'agregar' | 'reemplazar' = 'reemplazar';
@@ -74,7 +75,7 @@ export class AdminParticipantesComponent implements OnInit, OnDestroy {
     if (!this.archivoSql) return;
     const r = await swalNavidad.fire({
       icon: 'question', title: '¿Actualizar la base de usuarios?',
-      html: `Se reemplazará la base de usuarios con <b>${this.archivoSql.name}</b> y se actualizará la lista del sorteo.<br>El historial de ganadores no se toca.`,
+      html: `Se reemplazará la base de usuarios con <b>${this.archivoSql.name}</b> y se actualizará la lista del sorteo (si hay boletos cargados, se conservan).<br>El historial de ganadores no se toca.`,
       showCancelButton: true, confirmButtonText: 'Sí, actualizar', cancelButtonText: 'Cancelar',
     });
     if (!r.isConfirmed) return;
@@ -167,7 +168,11 @@ export class AdminParticipantesComponent implements OnInit, OnDestroy {
       next: r => {
         this.subiendo.set(false);
         this.resultadoImport.set(`${r.msg}: ${r.importados} participantes importados` +
-          (r.sinRfc ? ` · ${r.sinRfc} filas sin RFC omitidas` : '') +
+          (r.sinRfc ? ` · ${r.sinRfc} filas sin boleto ni RFC omitidas` : '') +
+          (r.conBoleto ? ` · ${r.conBoleto} con boleto` : '') +
+          (r.vinculados ? ` · ${r.vinculados} ligados a SAF por nombre` : '') +
+          (r.sinVincular ? ` · ${r.sinVincular} sin RFC (participan sin foto)` : '') +
+          (r.avisoSaf ? ` · ${r.avisoSaf}` : '') +
           (r.duplicadosEnArchivo ? ` · ${r.duplicadosEnArchivo} RFC repetidos en el archivo (se tomó la primera fila)` : '') +
           ` · Total: ${r.total}`);
         this.cargar();
@@ -215,13 +220,14 @@ export class AdminParticipantesComponent implements OnInit, OnDestroy {
     this.api.eliminarFoto(p.rfc).subscribe(() => { toast('info', 'Foto eliminada'); this.cargar(); });
   }
 
-  nuevo() { this.form = { rfc: '', nombre: '', area: '', direccion: '' }; this.editando.set(0); }
+  nuevo() { this.form = { boleto: '', rfc: '', nombre: '', area: '', direccion: '' }; this.editando.set(0); }
 
-  editar(p: Participante) { this.form = { rfc: p.rfc, nombre: p.nombre || '', area: p.area || '', direccion: p.direccion || '' }; this.editando.set(p.id); }
+  editar(p: Participante) { this.form = { boleto: String(p.boleto ?? ''), rfc: rfcVisible(p.rfc), nombre: p.nombre || '', area: p.area || '', direccion: p.direccion || '' }; this.editando.set(p.id); }
 
   guardar() {
     const id = this.editando();
-    const peticion = id ? this.api.actualizarParticipante(id, this.form) : this.api.crearParticipante(this.form);
+    const datos = { ...this.form, boleto: Number(this.form.boleto) || null };
+    const peticion = id ? this.api.actualizarParticipante(id, datos) : this.api.crearParticipante(datos);
     peticion.subscribe({
       next: () => { toast('success', 'Participante guardado'); this.editando.set(null); this.cargar(); },
       error: e => toast('error', mensajeError(e)),

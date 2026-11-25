@@ -14,6 +14,8 @@ class Participante extends Model<
 > {
     declare id: CreationOptional<number>;
     declare rfc: string;
+    // Número de boleto: solo quien tiene boleto participa en el sorteo
+    declare boleto: CreationOptional<number | null>;
     declare nombre: string | null;
     // area = dependencia; direccion ayuda a distinguir homónimos
     declare area: string | null;
@@ -35,6 +37,11 @@ class Participante extends Model<
             rfc:{
                 type: DataTypes.STRING(20),
                 allowNull: false,
+                unique: true
+            },
+            boleto:{
+                type: DataTypes.INTEGER,
+                allowNull: true,
                 unique: true
             },
             nombre:{

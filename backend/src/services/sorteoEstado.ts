@@ -6,6 +6,7 @@ export type Fase = 'espera' | 'sorteando' | 'premio' | 'revelado';
 export interface GanadorPantalla {
     id: number;
     rfc: string | null;
+    boleto: number | null;
     nombre: string | null;
     nombrePila: string | null;
     area: string | null;

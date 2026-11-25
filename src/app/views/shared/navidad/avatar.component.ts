@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { AdminApiService } from '../../../service/admin-api.service';
+import { AdminApiService, rfcVisible } from '../../../service/admin-api.service';
 
 // Foto de credencial en documentacionsaf (respaldo cuando no se descargó la foto local y hay internet)
 const FOTO_REMOTA = (rfc: string) => `https://documentacionsaf.gob.mx/credenciales/storage/credenciales/${encodeURIComponent(rfc)}.jpg`;
@@ -37,12 +37,12 @@ export class AvatarComponent {
 
   // Orden: foto local → foto de credencial en línea → iniciales
   fuente(): string | null {
-    const opciones = [this.local, this.remota && this._rfc ? FOTO_REMOTA(this._rfc) : null].filter(Boolean) as string[];
+    const opciones = [this.local, this.remota && this._rfc && rfcVisible(this._rfc) ? FOTO_REMOTA(this._rfc) : null].filter(Boolean) as string[];
     return opciones[this.intento] ?? null;
   }
 
   get iniciales(): string {
-    const base = (this.nombre || this.rfc || '?').trim();
+    const base = (this.nombre || rfcVisible(this.rfc) || '?').trim();
     const partes = base.split(/\s+/).filter(Boolean);
     return (partes.length > 1 ? partes[0][0] + partes[1][0] : base.slice(0, 2)).toUpperCase();
   }

@@ -1,9 +1,12 @@
 import { QueryTypes, Sequelize } from 'sequelize';
 import fs from 'fs';
 import path from 'path';
+import { Op } from 'sequelize';
 import sequelize from '../database/cuestionariosConnection';
 import Participante from '../models/participante';
+import Rifa from '../models/rifa';
 import { FOTOS_DIR, indiceFotos, normalizarRfc } from './fotos';
+import { buscadorSaf, esClaveBoleto } from './boletos';
 import { nombreCompleto, nombrePila } from './nombres';
 
 // Copia local de los servidores públicos activos de SAF (adminplem_saf) y de sus fotos de credencial,
@@ -13,7 +16,7 @@ const PLANTILLA_FOTO = process.env.FOTOS_URL_PLANTILLA
     || 'https://documentacionsaf.gob.mx/credenciales/storage/credenciales/{rfc}.jpg';
 
 let conexion: Sequelize | null = null;
-const conexionSaf = () => {
+export const conexionSaf = () => {
     if (!process.env.SAF_DB_HOST) throw new Error('Falta configurar SAF_DB_HOST en el archivo .env');
     if (!conexion) {
         conexion = new Sequelize(
@@ -48,7 +51,30 @@ export const probarSaf = async () => {
     return { ok: true, activos: Number(fila?.activos || 0), host: process.env.SAF_DB_HOST, base: process.env.SAF_DB_NAME || 'adminplem_saf' };
 };
 
+// Busca en SAF a quienes tienen boleto pero todavía no RFC
+const vincularBoletos = async () => {
+    const buscar = await buscadorSaf();
+    const todos = await Participante.findAll();
+    const usados = new Set(todos.map(p => p.rfc));
+    let vinculados = 0;
+    await sequelize.transaction(async (transaction) => {
+        for (const p of todos.filter(x => esClaveBoleto(x.rfc))) {
+            const saf = buscar(p.nombre);
+            if (!saf || usados.has(saf.rfc)) continue;
+            usados.add(saf.rfc);
+            await Rifa.update({ rfc: saf.rfc }, { where: { rfc: p.rfc }, transaction });
+            await p.update({ rfc: saf.rfc, nombre_pila: saf.nombrePila }, { transaction });
+            vinculados++;
+        }
+    });
+    return vinculados;
+};
+
 export const importarDesdeSaf = async (modo: 'agregar' | 'reemplazar') => {
+    // Con boletos cargados la lista es la de boletos: SAF no la reemplaza, solo completa los RFC que falten
+    if (await Participante.count({ where: { boleto: { [Op.ne]: null } } })) {
+        return { importados: await vincularBoletos(), total: await Participante.count(), soloVinculados: true };
+    }
     const filas: any[] = await conexionSaf().query(CONSULTA_USUARIOS, { type: QueryTypes.SELECT });
     const unicos = new Map<string, { rfc: string; nombre: string | null; nombre_pila: string | null; area: string | null; direccion: string | null }>();
     for (const f of filas) {
@@ -74,7 +100,7 @@ export const importarDesdeSaf = async (modo: 'agregar' | 'reemplazar') => {
             });
         }
     });
-    return { importados: unicos.size, total: await Participante.count() };
+    return { importados: unicos.size, total: await Participante.count(), soloVinculados: false };
 };
 
 // --- Descarga de fotos en segundo plano ---
@@ -128,6 +154,7 @@ export const iniciarDescarga = async (todas: boolean) => {
     const indice = indiceFotos();
     const rfcs = (await Participante.findAll({ attributes: ['rfc'], order: [['nombre', 'ASC']] }))
         .map(p => p.rfc)
+        .filter(rfc => !esClaveBoleto(rfc))
         .filter(rfc => todas || !indice.has(rfc));
 
     detener = false;

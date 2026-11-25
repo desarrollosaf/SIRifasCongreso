@@ -133,7 +133,9 @@ export const iniciarImportSql = async (archivo: string, nombreOriginal: string, 
             await Config.upsert({ clave: 'saf_actualizado', valor: new Date().toISOString() });
             await Config.upsert({ clave: 'saf_archivo', valor: nombreOriginal });
             estado.etapa = 'listo';
-            estado.mensaje = `Listo: base de usuarios actualizada con ${nombreOriginal}. ${r.importados} servidores públicos activos en el sorteo (total ${r.total}).`;
+            estado.mensaje = `Listo: base de usuarios actualizada con ${nombreOriginal}. ${r.soloVinculados
+                ? `La lista de boletos se conservó (${r.total}); ${r.importados} RFC completados.`
+                : `${r.importados} servidores públicos activos en el sorteo (total ${r.total}).`}`;
         } catch (e: any) {
             estado.error = true;
             estado.mensaje = `No se pudo importar: ${e?.message || e}`;

@@ -15,7 +15,7 @@
   </div>
   <p class="adm-ayuda">
     La base de usuarios (adminplem_saf) vive dentro de Docker. Para actualizarla, exporta adminplem_saf desde DBeaver o phpMyAdmin
-    (o al menos <b>s_usuario</b>, <b>t_dependencia</b> y <b>t_direccion</b>) y súbela aquí. Se reemplaza completa y se actualiza la lista del sorteo.
+    (o al menos <b>s_usuario</b>, <b>t_dependencia</b> y <b>t_direccion</b>) y súbela aquí. Se reemplaza completa. Si ya hay boletos cargados, la lista se conserva y solo se completan los RFC que falten.
   </p>
   @if (infoSaf(); as i) {
     <div class="adm-aviso" [class]="i.ok ? 'ok' : 'alerta'" style="margin-bottom:1rem">{{ i.texto }}</div>
@@ -75,7 +75,7 @@
   <!-- Importar lista -->
   <section class="adm-card">
     <h3>📄 Importar lista (Excel o CSV)</h3>
-    <p class="adm-ayuda">Alternativa a SAF. Primera fila con encabezados: <b>RFC</b>, <b>Nombre</b>, <b>Dependencia</b> (o Área) y <b>Dirección</b>.</p>
+    <p class="adm-ayuda">Primera fila con encabezados: <b>Boleto</b> (o No.), <b>Nombre</b>, <b>Dependencia</b> y <b>Adscripción</b>. El <b>RFC</b> es opcional: si falta, se busca en SAF por nombre.</p>
     <div class="adm-campo">
       <input class="adm-input" type="file" accept=".xlsx,.csv,.txt" (change)="elegirLista($event)" />
     </div>
@@ -119,7 +119,7 @@
   </div>
 
   <div class="adm-fila" style="margin-bottom:1rem">
-    <input class="adm-input crece" placeholder="Buscar por RFC, nombre, dependencia o dirección…" [(ngModel)]="q" (ngModelChange)="buscar()" />
+    <input class="adm-input crece" placeholder="Buscar por boleto, RFC, nombre, dependencia o dirección…" [(ngModel)]="q" (ngModelChange)="buscar()" />
     <select class="adm-select" style="width:auto" [(ngModel)]="foto" (ngModelChange)="buscar()">
       <option value="">Todos</option>
       <option value="con">Con foto</option>
@@ -131,6 +131,7 @@
     <div class="adm-aviso info">
       <b>{{ editando() ? 'Editar participante' : 'Nuevo participante' }}</b>
       <div class="adm-fila" style="margin-top:.6rem">
+        <input class="adm-input" style="max-width:110px" inputmode="numeric" placeholder="Boleto" [(ngModel)]="form.boleto" />
         <input class="adm-input" style="max-width:190px" placeholder="RFC" [(ngModel)]="form.rfc" />
         <input class="adm-input crece" placeholder="Nombre" [(ngModel)]="form.nombre" />
         <input class="adm-input crece" placeholder="Dependencia" [(ngModel)]="form.area" />
@@ -146,7 +147,7 @@
   } @else {
     <div class="adm-tabla-wrap">
       <table class="adm-tabla">
-        <thead><tr><th>Foto</th><th>RFC</th><th>Nombre</th><th>Dependencia</th><th>Dirección</th><th>Ganó</th><th></th></tr></thead>
+        <thead><tr><th>Foto</th><th>Boleto</th><th>RFC</th><th>Nombre</th><th>Dependencia</th><th>Adscripción</th><th>Ganó</th><th></th></tr></thead>
         <tbody>
           @for (p of datos(); track p.id) {
             <tr>
@@ -156,7 +157,8 @@
                   <input type="file" hidden accept=".jpg,.jpeg,.png,.webp" (change)="subirFotoDe(p, $event)" />
                 </label>
               </td>
-              <td><b>{{ p.rfc }}</b></td>
+              <td><b>{{ p.boleto ?? '—' }}</b></td>
+              <td>{{ rfcVisible(p.rfc) || 'Sin RFC' }}</td>
               <td>{{ p.nombre }}</td>
               <td>{{ p.area }}</td>
               <td><small>{{ p.direccion }}</small></td>

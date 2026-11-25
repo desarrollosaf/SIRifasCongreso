@@ -19,6 +19,7 @@ class Rifa extends Model<
     declare id: CreationOptional<number>;
     declare id_premio: number | null;
     declare rfc: string | null;
+    declare boleto: CreationOptional<number | null>;
     declare nombre: string | null;
     declare area: string | null;
     declare nombre_pila: CreationOptional<string | null>;
@@ -44,6 +45,10 @@ class Rifa extends Model<
             },
             rfc:{
                 type: DataTypes.STRING(20),
+                allowNull: true
+            },
+            boleto:{
+                type: DataTypes.INTEGER,
                 allowNull: true
             },
             nombre:{

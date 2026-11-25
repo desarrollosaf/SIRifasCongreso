@@ -5,6 +5,7 @@ import ExcelJS from 'exceljs';
 import Regalos from "../models/regalos";
 import Rifa from "../models/rifa";
 import { urlFoto, indiceFotos } from "../services/fotos";
+import { rfcVisible } from "../services/boletos";
 
 const PDFDocument = require('pdfkit');
 
@@ -14,7 +15,7 @@ const filtroGanadores = (req: Request) => {
     const where: any = {};
     if (['pendiente', 'entregado', 'cancelado'].includes(estatus)) where.estatus = estatus;
     else if (estatus !== 'todos') where.estatus = { [Op.ne]: 'cancelado' };
-    if (q) where[Op.or] = [{ rfc: { [Op.like]: `%${q}%` } }, { nombre: { [Op.like]: `%${q}%` } }];
+    if (q) where[Op.or] = [{ rfc: { [Op.like]: `%${q}%` } }, { nombre: { [Op.like]: `%${q}%` } }, ...(/^\d{1,9}$/.test(q) ? [{ boleto: Number(q) }] : [])];
     return where;
 };
 
@@ -32,6 +33,7 @@ export const listarGanadores = async (req: Request, res: Response): Promise<any>
     return res.json(ganadores.reverse().map(g => ({
         id: g.id,
         rfc: g.rfc,
+        boleto: g.boleto,
         nombre: g.nombre,
         area: g.area,
         estatus: g.estatus,
@@ -48,6 +50,7 @@ export const reporteExcel = async (req: Request, res: Response): Promise<any> =>
     const hoja = libro.addWorksheet('Ganadores');
     hoja.columns = [
         { header: '#', key: 'n', width: 6 },
+        { header: 'Boleto', key: 'boleto', width: 10 },
         { header: 'RFC', key: 'rfc', width: 16 },
         { header: 'Nombre', key: 'nombre', width: 36 },
         { header: 'Área', key: 'area', width: 30 },
@@ -60,7 +63,8 @@ export const reporteExcel = async (req: Request, res: Response): Promise<any> =>
     hoja.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF7D0037' } };
     ganadores.forEach((g, i) => hoja.addRow({
         n: i + 1,
-        rfc: g.rfc,
+        boleto: g.boleto,
+        rfc: rfcVisible(g.rfc),
         nombre: g.nombre,
         area: g.area,
         premio: g.m_regalo?.premio,
@@ -123,7 +127,7 @@ export const reporte = async (req: Request, res: Response): Promise<any> => {
     reporte.forEach((item, index) => {
         const fecha = fechaMx(item.createdAt) + (item.estatus === 'pendiente' ? '\n(pendiente)' : '');
         const premio = item.m_regalo?.premio || 'Sin premio';
-        const ganador = `${item.nombre || 'Sin nombre'}\n${item.rfc || ''}`;
+        const ganador = `${item.nombre || 'Sin nombre'}\n${[item.boleto ? `Boleto ${item.boleto}` : '', rfcVisible(item.rfc)].filter(Boolean).join(' · ')}`;
 
         const textHeight = Math.max(
             doc.heightOfString(premio, { width: 165 }),

@@ -6,12 +6,9 @@ import cookieParser from 'cookie-parser';
 import path from 'path';
 import { verifyToken } from '../middlewares/auth';
 import rRifa from "../routes/rifa"
-<<<<<<< HEAD
 import { asegurarEsquema, sembrarPremiosSiVacio } from '../database/setup';
 import { refrescarEstadoBase } from '../controllers/sorteo';
-=======
 import rPartido from "../routes/partido"
->>>>>>> e992aaf2063451ee085385379f5cc4a80af4d7a2
 class Server {
 
     private app: Application
@@ -45,13 +42,8 @@ class Server {
     midlewares(){
         this.app.use(express.json())
         this.app.use(cors({
-<<<<<<< HEAD
             //origin: 'http://localhost:4200',
             origin: process.env.CORS_ORIGIN || 'https://rifas.congresoedomex.gob.mx',
-=======
-            origin: 'http://localhost:4200',
-            //origin: 'https://rifas.congresoedomex.gob.mx',
->>>>>>> e992aaf2063451ee085385379f5cc4a80af4d7a2
             credentials: true
         }));
 
@@ -61,13 +53,9 @@ class Server {
         this.app.use((req: Request, res: Response, next: NextFunction) => {
             const publicPaths = [
                 '/api/user/login',
-<<<<<<< HEAD
                 '/api/admin',   // protegido por verifyAdmin en sus rutas
-                '/api/sorteo'   // pantalla pública
-=======
-                '/api/rifa',
+                '/api/sorteo',  // pantalla pública
                 '/api/partido'
->>>>>>> e992aaf2063451ee085385379f5cc4a80af4d7a2
             ];
             const isPublic = publicPaths.some(path => req.originalUrl.startsWith(path));
             if (isPublic) {

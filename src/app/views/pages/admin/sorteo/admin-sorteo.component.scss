@@ -39,6 +39,22 @@
 
 .subtitulo { font-family: var(--nv-serif); color: var(--nv-tinta); font-size: 1.15rem; margin: 0 0 .7rem; }
 
+.captura-boleto { display: flex; gap: .8rem; flex-wrap: wrap; align-items: stretch; }
+.campo-boleto {
+  flex: 1 1 220px;
+  min-width: 0;
+  padding: .6rem 1rem;
+  border: 2px solid var(--nv-linea);
+  border-radius: 14px;
+  font-family: var(--nv-serif);
+  font-size: 2rem;
+  letter-spacing: .12em;
+  text-align: center;
+  color: var(--nv-guinda);
+  &::placeholder { font-size: 1.1rem; letter-spacing: normal; color: #a39b8d; }
+  &:focus { outline: none; border-color: var(--nv-oro); box-shadow: 0 0 0 4px rgba(187, 148, 92, .2); }
+}
+
 .buscador {
   ::ng-deep .ng-select-container { min-height: 56px; border-radius: 14px; border-color: var(--nv-linea); font-size: 1.05rem; }
   &.ng-select-focused ::ng-deep .ng-select-container { border-color: var(--nv-oro); box-shadow: 0 0 0 4px rgba(187, 148, 92, .2); }
@@ -68,7 +84,7 @@
 }
 
 .acciones-resultado { display: flex; gap: .6rem; justify-content: center; flex-wrap: wrap; margin-top: .4rem; }
-.acciones-secundarias { display: flex; justify-content: center; margin-top: 1.2rem; padding-top: 1rem; border-top: 1px dashed var(--nv-linea); }
+.acciones-secundarias { display: flex; flex-wrap: wrap; gap: .6rem; justify-content: center; margin-top: 1.2rem; padding-top: 1rem; border-top: 1px dashed var(--nv-linea); }
 
 .mini-pantalla { display: flex; gap: .9rem; align-items: center; margin-bottom: 1rem; }
 .fase { font-family: var(--nv-serif); font-size: 1.25rem; color: var(--nv-oro-claro); }
